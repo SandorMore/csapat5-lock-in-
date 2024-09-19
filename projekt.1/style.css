@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+*{
+    margin: 0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    font-family: "Bebas Neue";
+}
+
+li a{
+    color: #f0dfad;
+    text-decoration: none;
+}
+
+#navlist{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 50px;
+}
+
+#home{
+    font-family: "Bebas Neue";
+    font-size: 2em;
+    font-weight: bold;
+    font-style: italic;
+}
+
+#home:hover{
+    cursor: default;
+}
+
+.nav-links{
+    display: flex;
+    gap: 20px;
+    transition: 1s;
+}
+
+.nav-links:hover{
+    color: #edf0da;
+}
+
+body{
+    /* színek: 
+    rasberry rose: #AA4465
+    beige: edf0da
+    khaki: a89b8c
+    vanilla: f0dfad
+    raw umber: 8f5c38
+    */
+}
+
+#navbar{
+    display: flex;
+    align-items: center;
+    background-color: #AA4465;
+    height: 50px;
+    width: 100%;
+}
+
+#navlist{
+    align-items: center;
+    gap: 30px;
+    list-style: none;
+}
