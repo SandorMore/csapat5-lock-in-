@@ -1,5 +1,8 @@
 from pickletools import int4
+import string
 import random
+
+# Számok bekérése és leellenőrzése
 isSzamJo = False
 while isSzamJo == False:
     szam1 = int(input("Adja meg a számok asó határát: "))
@@ -10,8 +13,18 @@ while isSzamJo == False:
     else:
         print("Az adat nem lett jól megadva.")
 
+# Random szamok generálása
 
 genRndNum = random.randint(szam1, szam2)
 print(genRndNum)
 
+# Kisbetűk és nagybetűk listába
+
+kisbetuk = list(string.ascii_lowercase)
+nagybetuk = list(string.ascii_uppercase)
+
+# Egyesített lista kis- és nagybetűkkel
+
+angol_abc = kisbetuk + nagybetuk
+print(angol_abc)
 
