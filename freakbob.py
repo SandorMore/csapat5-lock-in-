@@ -9,7 +9,7 @@ print("2. Adott darabszámú véletlen szöveg generálása az angol ABC nagybet
 print("3. Ugyanazokat a paramétereket olvassa be, mint az 1. feladat, de itt nem generálja a számokat, hanem beolvassa a ki.txt tartalmát, és leellenőrzi, hogy megfelel-e a feltételeknek.")
 print("4. Ugyanazokat a paramétereket olvassa be, mint a 2. feladat, de itt nem generálja a szöveget, hanem beolvassa a ki.txt tartalmát, és leellenőrzi, hogy megfelel-e a feltételeknek.")
 kerdes = input("Válassz: ")
-def szamGen(num1 = None, num2 = None):
+def Szam_Gen(num1 = None, num2 = None):
     x = int(input("Hányszor generáljon számot: "))
     if num1 == None:
         num1 = int(input("Adja meg a számok alsó határát: ")) #ha nincs parameter lekerdezi
@@ -21,7 +21,7 @@ def szamGen(num1 = None, num2 = None):
             f = open("ki.txt", "w", encoding="utf-8")
             f.write(";".join(map(str, szamlista)))
             f.close()
-def szoGen(hanyszorGen = None):
+def Szo_Gen(hanyszorGen = None):
     kisbetuk = list(string.ascii_lowercase)
     nagybetuk = list(string.ascii_uppercase)
     angol_abc = kisbetuk + nagybetuk
@@ -36,13 +36,29 @@ def szoGen(hanyszorGen = None):
     f = open("ki.txt", "w", encoding="utf-8")
     f.write(";".join(map(str, szolista)))
     f.close()
-if kerdes == "1":
-    szamGen() #ha van parameter megnezi az alapjan
-if kerdes == "2":
-    szoGen(4) #ha van parameter megnezi az alapjan
-if kerdes == "3":
+def Check_Szam(num1 = None, num2 = None):
     x = int(input("Hányszor generáljon számot: "))
-    szam1 = int(input("Adja meg a számok alsó határát: "))
-    szam2 = int(input("Adja meg a számok felső határát: "))
-    f = open("ki.txt", "r", encoding="utf-8")
+    if num1 == None:
+        num1 = int(input("Adja meg a számok alsó határát: ")) #ha nincs parameter lekerdezi
+    if num2 == None:
+        num2 = int(input("Adja meg a számok felső határát: ")) #ha nincs parameter lekerdezi
+    f = open("ki_test_1.txt", "r", encoding="utf-8")
     lines = f.readlines()
+    for line in lines:
+        parts = line.strip().split(";")
+    if len(parts) != x:
+        print(f"Hibás darabszám! Elvárt: {x}, talált: {len(parts)}")
+        return
+
+    for number in parts:
+        if not (num1 <= number <= num2):
+            print(f"Hibás szám található: {number}, amely kívül esik a [{num1}, {num2}] tartományon.")
+            return
+
+    print("Minden szám megfelel a feltételeknek.")
+if kerdes == "1":
+    Szam_Gen() #ha van parameter megnezi az alapjan
+if kerdes == "2":
+    Szo_Gen(4) #ha van parameter megnezi az alapjan
+if kerdes == "3":
+    Check_Szam() #ha van parameter megnezi az alapjan
