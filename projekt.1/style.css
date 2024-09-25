@@ -85,6 +85,19 @@ header{
     display: block;
     font-weight: bold;
     font-family: "Bebas Neue";
+    transition-duration: 0.3s;
+}
+
+#leiras{
+    width: 85%;
+    height: 250px;
+    background-color: #AA4465;
+    margin: 30px 0px;
+    border-radius: 30px;
+    padding: 30px;
+    display: block;
+    font-weight: bold;
+    font-family: "Bebas Neue";
 }
 
 header h2{
@@ -137,4 +150,48 @@ header h2{
     height: 500px;
     border-radius: 10px;
     object-fit: cover;
+}
+
+.szemleltetes{
+    font-family: "Bebas Neue";
+    font-size: 2.5rem;
+    height: 500px;
+    width: 750px;
+    background-color: #AA4465;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#szemleltetes{
+    margin-top: 50px;
+    gap: 50px;
+    
+}
+
+footer{
+    width: 100%;
+    height: 500px;
+    background-color: #edf0da;
+    margin-top: 50px;
+    display: flex;
+    padding: 100px;
+    gap: 20px;
+    align-items: center;
+}
+
+.footer{
+    background-color: #AA4465;
+    width: 50%;
+    height: 300px;
+    border-radius: 20px;
+    display: flex;
+    text-align: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 35px 20px 0px 70px;
+}
+
+.footer_li:not(:last-child){
+    margin-bottom: 50px;
 }
