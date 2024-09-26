@@ -38,6 +38,8 @@ li a{
 #home:hover{
     cursor: default;
     font-size: 2.2em;
+    color: azure;
+    text-shadow: #edf0da;
 }
 
 .nav-links{
@@ -88,6 +90,10 @@ header{
     transition-duration: 0.3s;
 }
 
+.responsive_text{
+
+}
+
 #leiras{
     width: 85%;
     height: 250px;
@@ -98,9 +104,14 @@ header{
     display: block;
     font-weight: bold;
     font-family: "Bebas Neue";
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 header h2{
+    font-family: "Bebas Neue";
     font-size: 2.5rem;
     margin-bottom: 10px;
     text-align: center;
@@ -120,6 +131,7 @@ header h2{
     align-items: center;
     justify-content: space-evenly;
     gap: 25px;
+    padding: 20px;
 }
 #tarigeny{
     width: 100%;
@@ -129,6 +141,7 @@ header h2{
     align-items: center;
     justify-content: space-evenly;
     gap: 25px;
+    padding: 20px;
 }
 
 .szoveg_1{
@@ -137,19 +150,20 @@ header h2{
     height: 500px;
     width: 750px;
     background-color: #AA4465;
-    padding: 30px;
+    padding: 50px;
     border-radius: 10px;
-}
-
-.szoveg_1 p{
-    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .kep{
-    width: 500px;
-    height: 500px;
+    max-width: 40%;
+    min-width: 500px;
+    height: auto;
     border-radius: 10px;
     object-fit: cover;
+    border: 5px solid black;
 }
 
 .szemleltetes{
@@ -194,4 +208,100 @@ footer{
 
 .footer_li:not(:last-child){
     margin-bottom: 50px;
+}
+
+.szoveg_h2{
+    margin-bottom: 20px;
+}
+
+.custom-select {
+    display: none; /* Alapértelmezetten elrejtve */
+}
+
+.custom-select{
+
+}
+
+.responsive_text{
+    font-size: 1.2rem;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+@media (max-width: 1200px){
+    .responsive_text{
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 1090px){
+    .responsive_text{
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 1040px){
+    .szoveg_1 p{
+        font-size: 0.92rem;
+    }
+}
+
+@media (max-width: 900px){
+    #hatekonysag{
+        flex-wrap: wrap;
+        height: 1000px;            
+    }
+    #tarigeny{
+        flex-wrap: wrap;
+        height: 1000px;
+    }
+    header{
+        font-size: 0.8rem;
+    }
+    .szoveg_1{
+        height: 400px;
+        width: 750px;
+    }
+
+    #leiras{
+        font-size: 0.8rem;
+    }
+    .responsive_text{
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 600px) {
+    header{
+        font-size: 0.7rem;
+    }
+    .nav-links {
+        display: none; /* Rejtjük a listát kisebb képernyőkön */
+    }
+    .custom-select {
+        display: block; /* Megjelenítjük a select elemet */
+    }
+    .responsive_text{
+        font-size: 0.67rem;
+    }
+}
+
+@media (max-width: 540px){
+    .kep{
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 510px){
+    #hatekonysag{
+        flex-wrap: wrap;
+        height: 850px;            
+    }
+    #tarigeny{
+        flex-wrap: wrap;
+        height: 850px;
+    }
+    .szoveg_1{
+        height: 500px;
+    }
 }
