@@ -1,13 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from sorting_algorithm import SortingAlgorithm
 import re
 
 class SortingVisualizer:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.data = None
-        self.textData = False
         self.radiobuttonIsText = tk.BooleanVar(value=False)
         
         self.style = ttk.Style(root)
@@ -146,7 +146,7 @@ class SortingVisualizer:
         playButtonHolder.grid(column=1, row=0)
         playButtonHolder.pack_propagate(False)
 
-        playButton = ttk.Button(playButtonHolder)
+        playButton = ttk.Button(playButtonHolder, command=self.test)
         playButton.pack(fill=tk.BOTH, expand=True)
 
         # root.mainFrame.mediaFrame.backButtonHolder.backButton
@@ -177,6 +177,12 @@ class SortingVisualizer:
         speedScale.set(1)
         speedScale.grid(column=0, row=0, sticky="ew")
 
+    class DataItem:
+        def __init__(self, value, toDisplay = None, columnId = None):
+            self.value = value
+            self.toDisplay = toDisplay if toDisplay else str(value)
+            self.columnId = columnId
+
     def generateAndLoadData(self):
         # TODO: freakbob
         self.getDataFromFile("ki_test_1.txt")
@@ -184,7 +190,6 @@ class SortingVisualizer:
 
     def getDataFromFile(self, filename):
         self.data = None
-        self.textData = False
 
         try:
             with open(filename, "r", encoding="utf-8") as f:
@@ -194,9 +199,8 @@ class SortingVisualizer:
             return
 
         if re.match("^([0-9]+;)+[0-9]+$", content):
-            self.data = list(map(int, content.split(";")))
+            self.data = [self.DataItem(int(s), s) for s in content.split(";")]
         elif re.match("^([a-zA-Z]+;)+[a-zA-Z]+$", content):
-            self.textData = True
             self.data = self.assignValuesToStrings(content.split(";"))
         else:
             self.showErrorMessage("A legenerált file-ban helytelen az adatszerkezet.")
@@ -210,17 +214,20 @@ class SortingVisualizer:
             value = 0
             for i,c in enumerate(s):
                 value += (ord(c)-ord('a'))/26**(i+1)
-            toReturn.append((s, value))
+            toReturn.append(self.DataItem(value, s))
         return toReturn
     
     def drawColumns(self):
-        values = self.data if not self.textData else list(map(lambda x: x[1], self.data))
-
+        values = [x.value for x in self.data]
         minV = min(values)
         maxV = max(values)
+
         cWidth = self.canvas.winfo_width()
         cHeight = self.canvas.winfo_height()
         barAreaWidth = cWidth/len(self.data)
 
-        for i,value in enumerate(values):
-            self.canvas.create_rectangle(barAreaWidth*i+barAreaWidth*0.1, cHeight, barAreaWidth*i+barAreaWidth*0.9, cHeight-5-((value-minV)/(maxV-minV)*cHeight*0.8))
+        for i,item in enumerate(self.data):
+            item.columnId = self.canvas.create_rectangle(barAreaWidth*i+barAreaWidth*0.1, cHeight, barAreaWidth*i+barAreaWidth*0.9, cHeight-5-((item.value-minV)/(maxV-minV)*cHeight*0.8), fill="grey70")
+    
+    def test(self):
+        SortingAlgorithm.check(self, self.data[3], self.data[4])
