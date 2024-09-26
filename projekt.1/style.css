@@ -146,7 +146,7 @@ header h2{
     font-family: "Bebas Neue";
     font-size: 2.5rem;
     height: 500px;
-    width: 750px;
+    width: 850px;
     background-color: #AA4465;
     padding: 50px;
     border-radius: 10px;
@@ -212,11 +212,11 @@ footer{
     margin-bottom: 20px;
 }
 
-.custom-select {
+.dropdown {
     display: none; /* Alapértelmezetten elrejtve */
 }
 
-.custom-select{
+.dropdown{
 
 }
 
@@ -271,12 +271,12 @@ footer{
 
 @media (max-width: 600px) {
     header{
-        font-size: 0.7rem;
+        font-size: 0.8rem;
     }
     .nav-links {
         display: none; /* Rejtjük a listát kisebb képernyőkön */
     }
-    .custom-select {
+    .dropdown {
         display: block; /* Megjelenítjük a select elemet */
     }
     .responsive_text{
@@ -288,9 +288,6 @@ footer{
     .kep{
         min-width: 300px;
     }
-}
-
-@media (max-width: 510px){
     #hatekonysag{
         flex-wrap: wrap;
         height: 850px;            
@@ -301,6 +298,28 @@ footer{
     }
     .szoveg_1{
         height: 500px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 425px){
+    header{
+        height: 300px;
+    }
+}
+
+@media (max-width: 340px){
+    .kep{
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 330px) {
+    header{
+        height: 350px;
+    }
+    .szoveg_1{
+        height: 520px;
     }
 }
 
