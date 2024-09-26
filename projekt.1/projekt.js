@@ -3,7 +3,7 @@ const navSelect = document.querySelector('.nav-select');
 navSelect.addEventListener('change', function() {
     const selectedValue = navSelect.value;
     if (selectedValue) {
-        window.location.href = selectedValue; // Navigál a kiválasztott hivatkozásra
+        window.location.href = selectedValue;
     }
 });
 
