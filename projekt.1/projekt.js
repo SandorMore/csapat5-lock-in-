@@ -39,5 +39,5 @@ document.addEventListener('DOMContentLoaded', function() {
             selectItems.classList.add('select-hide');
         }
     });
-});
+}); 
   
