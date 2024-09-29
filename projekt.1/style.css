@@ -4,10 +4,14 @@
     margin: 0;
     padding:0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+}
+
+p{
+    color: white;
 }
 
 body{
+    background-color: #141B41;
     font-family: "Bebas Neue";
 }
 
@@ -15,7 +19,7 @@ li a{
     font-family: "Bebas Neue";
     font-size: 1.5rem;
     font-weight: lighter;
-    color: black;
+    color: rgb(255, 255, 255);
     text-decoration: none;
     transition-duration: 0.3s;
 }
@@ -33,13 +37,14 @@ li a{
     font-weight: bold;
     font-style: italic;
     transition-duration: 0.3s;
+    color: rgb(255, 255, 255);
 }
 
 #home:hover{
     cursor: default;
     font-size: 2.2em;
-    color: azure;
-    text-shadow: #edf0da;
+    color: #7b71ff;
+    text-shadow: 2px #7b71ff;
 }
 
 .nav-links{
@@ -49,7 +54,7 @@ li a{
 }
 
 li a:hover{
-    color: #edf0da;
+    color: #7b71ff;
     font-size: 1.6rem;
 }
 
@@ -65,7 +70,7 @@ body{
 #navbar{
     display: flex;
     align-items: center;
-    background-color: #AA4465;
+    background-color: #306BAC;
     height: 50px;
     width: 100%;
 }
@@ -78,24 +83,19 @@ body{
 header{
     width: 85%;
     height: 250px;
-    background-color: #AA4465;
+    background-color: #306BAC;
     margin: 30px 0px;
     border-radius: 30px;
     padding: 30px;
     display: block;
-    font-weight: bold;
     font-family: "Bebas Neue";
     transition-duration: 0.3s;
-}
-
-.responsive_text{
-
 }
 
 #leiras{
     width: 85%;
     height: 250px;
-    background-color: #AA4465;
+    background-color: #6F9CEB;
     margin: 30px 0px;
     border-radius: 30px;
     padding: 30px;
@@ -113,6 +113,7 @@ header h2{
     font-size: 2.5rem;
     margin-bottom: 10px;
     text-align: center;
+    color: rgb(255, 255, 255);
 }
 
 .container{
@@ -124,21 +125,17 @@ header h2{
 #hatekonysag{
     width: 100%;
     height: 600px;
-    background-color: #a89b8c;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    gap: 25px;
     padding: 20px;
 }
 #tarigeny{
     width: 100%;
     height: 600px;
-    background-color: #edf0da;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    gap: 25px;
     padding: 20px;
 }
 
@@ -147,38 +144,30 @@ header h2{
     font-size: 2.5rem;
     height: 500px;
     width: 850px;
-    background-color: #AA4465;
+    background-color: #6F9CEB;
     padding: 50px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    color: white;
 }
 
-.kep{
+.kep_1{
     max-width: 40%;
     min-width: 500px;
     height: auto;
     border-radius: 10px;
     object-fit: cover;
-    border: 5px solid black;
+    border: 8px solid #6F9CEB;
 }
 
-.szemleltetes{
-    font-family: "Bebas Neue";
-    font-size: 2.5rem;
-    height: 500px;
-    width: 750px;
-    background-color: #AA4465;
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
+.kep_1:hover{
+
 }
 
-#szemleltetes{
-    margin-top: 50px;
-    gap: 50px;
-    
+hr{
+    color: #6F9CEB;
 }
 
 footer{
@@ -193,7 +182,7 @@ footer{
 }
 
 .footer{
-    background-color: #AA4465;
+    background-color: #7b71ff;
     width: 50%;
     height: 300px;
     border-radius: 20px;
@@ -217,13 +206,125 @@ footer{
 }
 
 .dropdown{
+    max-width: 150px;
+    height: 35px;
+    cursor: pointer;
+    display: none;
+}
+select{
+    background-color: #306BAC;    
+    font-family: "Bebas Neue";
+    width: 100%;
+    border: solid 2px #6F9CEB;
+    cursor: pointer;
+    padding: 0.2em 0.5em;
+    border-radius: 10px;
+    box-shadow: 0 5px 5px #6F9CEB;
+    text-align: start;
+    color: white;
+}
 
+select:hover{
+
+}
+
+option{
+    color: white;
+}
+
+.dropdown{
+    position: relative;
 }
 
 .responsive_text{
     font-size: 1.2rem;
     text-align: justify;
     text-justify: inter-word;
+}
+
+#szemleltetes{
+    margin-top: 50px;
+    border-top: 5px solid white;
+    border-bottom: 5px solid white;
+    width: 100%;
+    background-color: #98B9F2;
+    height: 800px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 50px;
+}
+
+.szemleltetes_elemek{
+    max-width: 400px;
+    height: 600px;
+    background-color: #89B6A5;
+    border: 3px solid white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 10px 20px;
+    margin: 20px 20px;
+}
+
+.elem_2{
+    max-width: 250px;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.kep_2{
+    max-width: 40%;
+    min-width: 300px;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+@keyframes glow {
+  0% {
+    border-color: red;
+  }
+  25% {
+    border-color: blue;
+  }
+  75% {
+    border-color: yellow;
+  }
+  100% {
+    border-color: purple;
+  }
+}
+@-webkit-keyframes glow {
+  0% {
+    border-color: red;
+  }
+  25% {
+    border-color: blue;
+  }
+  75% {
+    border-color: yellow;
+  }
+  100% {
+    border-color: purple;
+  }
+}
+
+
+
+@media (max-width: 1643px){
+    #szemleltetes{
+        height: 800px;
+        padding: 0px;
+    }
+}
+
+@media (max-width: 1543px){
+    #szemleltetes{
+        height: 1600px;
+    }
 }
 
 @media (max-width: 1200px){
@@ -269,6 +370,12 @@ footer{
     }
 }
 
+@media(max-width: 771px){
+    #szemleltetes{
+        height: 2800px;
+    }
+}
+
 @media (max-width: 600px) {
     header{
         font-size: 0.8rem;
@@ -278,6 +385,8 @@ footer{
     }
     .dropdown {
         display: block; /* Megjelenítjük a select elemet */
+        justify-content: space-evenly;
+        align-items: center;
     }
     .responsive_text{
         font-size: 0.67rem;
@@ -285,7 +394,7 @@ footer{
 }
 
 @media (max-width: 540px){
-    .kep{
+    .kep_1{
         min-width: 300px;
     }
     #hatekonysag{
@@ -302,14 +411,32 @@ footer{
     }
 }
 
+@media(max-width: 500px){
+    .szemleltetes_elemek{
+        min-width: 300px;
+    }
+}
+
 @media (max-width: 425px){
     header{
         height: 300px;
     }
 }
 
+@media(max-width: 375px){
+    .kep_2{
+        max-width: 250px;
+    }
+}
+
 @media (max-width: 340px){
-    .kep{
+    .kep_1{
+        min-width: 280px;
+    }
+    .kep_2{
+        min-width: 280px;
+    }
+    .szemleltetes_elemek{
         min-width: 280px;
     }
 }
@@ -320,6 +447,9 @@ footer{
     }
     .szoveg_1{
         height: 520px;
+    }
+    .kep_2{
+        min-width: 250px;
     }
 }
 
