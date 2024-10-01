@@ -151,6 +151,7 @@ header h2{
     flex-direction: column;
     gap: 20px;
     color: white;
+    margin: 20px;
 }
 
 .kep_1{
