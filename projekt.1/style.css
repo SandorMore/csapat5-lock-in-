@@ -81,7 +81,7 @@ body{
     list-style: none;
 }
 header{
-    width: 85%;
+    width: 95%;
     height: 250px;
     background-color: #306BAC;
     margin: 30px 0px;
@@ -90,6 +90,7 @@ header{
     display: block;
     font-family: "Bebas Neue";
     transition-duration: 0.3s;
+    border-top: 5px solid #98B9F2;
 }
 
 #leiras{
@@ -100,7 +101,6 @@ header{
     border-radius: 30px;
     padding: 30px;
     display: block;
-    font-weight: bold;
     font-family: "Bebas Neue";
     text-align: center;
     display: flex;
@@ -173,29 +173,18 @@ hr{
 
 footer{
     width: 100%;
-    height: 500px;
-    background-color: #edf0da;
+    height: 120px;
+    background-color: #6F9CEB;
     margin-top: 50px;
     display: flex;
-    padding: 100px;
+    padding: 20px;
     gap: 20px;
-    align-items: center;
+    flex-direction: column;
 }
 
-.footer{
-    background-color: #7b71ff;
-    width: 50%;
-    height: 300px;
-    border-radius: 20px;
-    display: flex;
-    text-align: center;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 35px 20px 0px 70px;
-}
-
-.footer_li:not(:last-child){
-    margin-bottom: 50px;
+footer h2{
+    color: white;
+    font-weight: lighter;
 }
 
 .szoveg_h2{
@@ -344,6 +333,9 @@ option{
     .szoveg_1 p{
         font-size: 0.92rem;
     }
+    footer{
+        height: 200px;
+    }
 }
 
 @media (max-width: 900px){
@@ -367,7 +359,7 @@ option{
         font-size: 0.8rem;
     }
     .responsive_text{
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -390,7 +382,7 @@ option{
         align-items: center;
     }
     .responsive_text{
-        font-size: 0.67rem;
+        font-size: 0.85rem;
     }
 }
 
@@ -416,9 +408,6 @@ option{
     .szemleltetes_elemek{
         min-width: 300px;
     }
-}
-
-@media (max-width: 425px){
     header{
         height: 300px;
     }
@@ -427,6 +416,15 @@ option{
 @media(max-width: 375px){
     .kep_2{
         max-width: 250px;
+    }
+    footer{
+        height: 250px;
+    }
+    #leiras{
+        height: 400px;
+    }
+    header{
+        height: 335px;
     }
 }
 
@@ -444,7 +442,7 @@ option{
 
 @media (max-width: 330px) {
     header{
-        height: 350px;
+        height: 360px;
     }
     .szoveg_1{
         height: 520px;
