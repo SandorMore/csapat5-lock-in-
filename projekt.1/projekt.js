@@ -40,3 +40,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 }); 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.getElementById('mySelect');
+
+    select.addEventListener('change', function() {
+        const selectedValue = select.value;
+        console.log('Selected value:', selectedValue); // Ellenőrizzük a kiválasztott értéket
+
+        if (selectedValue) {
+            const targetElement = document.querySelector(selectedValue);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+                console.log('Görgetés sikeres:', targetElement); // Ellenőrizzük, hogy a megfelelő elem van-e kiválasztva
+            } else {
+                console.error('Hiba: Nem található az elem az azonosítóval:', selectedValue);
+            }
+        }
+    });
+});
