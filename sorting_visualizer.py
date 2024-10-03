@@ -1,15 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from sorting_algorithm import SortingAlgorithm
 import re
+import queue
+import threading
+
+import sorting_algorithm
 
 class SortingVisualizer:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.data = None
+        self.callQueue = queue.Queue()
+        self.root.bind("<<queue_call>>", self.queueHandler)
         self.radiobuttonIsText = tk.BooleanVar(value=False)
-        
+
         self.style = ttk.Style(root)
         self.style.configure("TFrame", background="grey80")
 
@@ -182,6 +187,30 @@ class SortingVisualizer:
             self.value = value
             self.toDisplay = toDisplay if toDisplay else str(value)
             self.columnId = columnId
+    
+    class CallData:
+        def __init__(self, func, args, kwargs):
+            self.func = func
+            self.args = args
+            self.kwargs = kwargs
+            self.reply = None
+            self.replyEvent = threading.Event()
+    
+    def callOnMainThread(self, func, *args, **kwargs):
+        callData = self.CallData(func, args, kwargs)
+        self.callQueue.put(callData)
+        self.root.event_generate("<<queue_call>>", when="tail")
+        callData.replyEvent.wait()
+        return callData.reply
+
+    def queueHandler(self, event):
+        try:
+            while True:
+                callData = self.callQueue.get_nowait()
+                callData.reply = callData.func(*callData.args, **callData.kwargs)
+                callData.replyEvent.set()
+        except queue.Empty:
+            pass
 
     def generateAndLoadData(self):
         # TODO: freakbob
@@ -204,10 +233,10 @@ class SortingVisualizer:
             self.data = self.assignValuesToStrings(content.split(";"))
         else:
             self.showErrorMessage("A legenerált file-ban helytelen az adatszerkezet.")
-    
+
     def showErrorMessage(self, message):
         messagebox.showerror(message=message)
-    
+
     def assignValuesToStrings(self, textData):
         toReturn = []
         for s in map(str.lower, textData):
@@ -216,8 +245,9 @@ class SortingVisualizer:
                 value += (ord(c)-ord('a'))/26**(i+1)
             toReturn.append(self.DataItem(value, s))
         return toReturn
-    
+
     def drawColumns(self):
+        self.canvas.delete("column")
         values = [x.value for x in self.data]
         minV = min(values)
         maxV = max(values)
@@ -225,9 +255,18 @@ class SortingVisualizer:
         cWidth = self.canvas.winfo_width()
         cHeight = self.canvas.winfo_height()
         barAreaWidth = cWidth/len(self.data)
+        barWidth = barAreaWidth*0.8
 
         for i,item in enumerate(self.data):
-            item.columnId = self.canvas.create_rectangle(barAreaWidth*i+barAreaWidth*0.1, cHeight, barAreaWidth*i+barAreaWidth*0.9, cHeight-5-((item.value-minV)/(maxV-minV)*cHeight*0.8), fill="grey70")
-    
+            item.columnId = self.canvas.create_rectangle(barAreaWidth*i+(barAreaWidth-barWidth)/2, cHeight, barAreaWidth*i+(barAreaWidth-barWidth)/2+barWidth, cHeight-5-((item.value-minV)/(maxV-minV)*cHeight*0.8), tags=("column"))
+        self.updateCanvas()
+
+    def updateCanvas(self):
+        self.canvas.itemconfigure("column", fill="grey70")
+        self.canvas.itemconfigure("incorrect", fill="red")
+        self.canvas.itemconfigure("correct", fill="green")
+
     def test(self):
-        SortingAlgorithm.check(self, self.data[3], self.data[4])
+        if self.data:
+            algorithm = sorting_algorithm.BubbleSort(self)
+            threading.Thread(target=algorithm.sort, daemon=True).start()
