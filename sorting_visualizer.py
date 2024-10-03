@@ -13,7 +13,8 @@ class SortingVisualizer:
         self.data = None
         self.callQueue = queue.Queue()
         self.root.bind("<<queue_call>>", self.queueHandler)
-        self.radiobuttonIsText = tk.BooleanVar(value=False)
+        self.selectedDataType = tk.StringVar(value="num")
+        self.selectedDataType.trace_add("write", self.onSelectedDataTypeChange)
 
         self.style = ttk.Style(root)
         self.style.configure("TFrame", background="grey80")
@@ -64,11 +65,11 @@ class SortingVisualizer:
         radiobuttonsFrame.grid(column=0, row=1, sticky="ew")
 
         # root.mainFrame.optionsFrame.radiobuttonsFrame.numbersRadiobutton
-        numbersRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="numbers", variable=self.radiobuttonIsText, value=False)
+        numbersRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="numbers", variable=self.selectedDataType, value="num")
         numbersRadiobutton.grid(column=0, row=0, sticky="w")
 
         # root.mainFrame.optionsFrame.radiobuttonsFrame.textRadiobutton
-        textRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="text", variable=self.radiobuttonIsText, value=True)
+        textRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="text", variable=self.selectedDataType, value="text")
         textRadiobutton.grid(column=0, row=1, sticky="w")
 
         # root.mainFrame.optionsFrame.entryFrame
@@ -91,7 +92,7 @@ class SortingVisualizer:
         quantityLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame.quantityEntry
-        quantityEntry = ttk.Entry(quantityFrame, width=3)
+        quantityEntry = ttk.Entry(quantityFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P"))
         quantityEntry.grid(column=1, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame
@@ -106,8 +107,8 @@ class SortingVisualizer:
         minLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame.minEntry
-        minEntry = ttk.Entry(minFrame, width=3)
-        minEntry.grid(column=1, row=0, sticky="we")
+        self.minEntry = ttk.Entry(minFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P"))
+        self.minEntry.grid(column=1, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame
         maxFrame = ttk.Frame(entryFrame, padding=3)
@@ -121,8 +122,8 @@ class SortingVisualizer:
         maxLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame.maxEntry
-        maxEntry = ttk.Entry(maxFrame, width=3)
-        maxEntry.grid(column=1, row=0, sticky="we")
+        self.maxEntry = ttk.Entry(maxFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P"))
+        self.maxEntry.grid(column=1, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.generateDataButton
         generateDataButton = ttk.Button(optionsFrame, text="Új adat generálása", command=self.generateAndLoadData)
@@ -211,6 +212,17 @@ class SortingVisualizer:
                 callData.replyEvent.set()
         except queue.Empty:
             pass
+
+    def validateNumInput(self, input):
+        return input.isdigit() or input == ""
+
+    def onSelectedDataTypeChange(self, *args):
+        if self.selectedDataType.get() == "num":
+            self.minEntry.state(["!disabled"])
+            self.maxEntry.state(["!disabled"])
+        else:
+            self.minEntry.state(["disabled"])
+            self.maxEntry.state(["disabled"])
 
     def generateAndLoadData(self):
         # TODO: freakbob
