@@ -1,5 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
+html{
+    scroll-behavior: smooth;
+}
+
+:root{
+    --bg-color: #1F1300;
+    --elements-bg: #f7934c;
+    --borders: #CC5803;
+    --szemleltetes: #F7B05B;
+    --footer: #FFC15E;
+}
+
 *{
     margin: 0;
     padding:0;
@@ -11,7 +23,7 @@ p{
 }
 
 body{
-    background-color: #141B41;
+    background-color: var(--bg-color);
     font-family: "Bebas Neue";
 }
 
@@ -31,9 +43,9 @@ li a{
     padding: 50px;
 }
 
-#home{
+#home a{
     font-family: "Bebas Neue";
-    font-size: 2em;
+    font-size: 2.5em;
     font-weight: bold;
     font-style: italic;
     transition-duration: 0.3s;
@@ -42,9 +54,9 @@ li a{
 
 #home:hover{
     cursor: default;
-    font-size: 2.2em;
-    color: #7b71ff;
-    text-shadow: 2px #7b71ff;
+    font-size: 1.3em;
+    color: var(--footer);
+    text-shadow: 2px var(--footer);
 }
 
 .nav-links{
@@ -54,16 +66,22 @@ li a{
 }
 
 li a:hover{
-    color: #7b71ff;
+    color: var(--footer);
     font-size: 1.6rem;
 }
 
 #navbar{
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     align-items: center;
-    background-color: #306BAC;
-    height: 50px;
+    background-color: var(--elements-bg);
+    height: 60px;
     width: 100%;
+    border-bottom-left-radius: 20%;
+    border-bottom-right-radius: 20%;
+    border-bottom: 5px solid var(--borders);
 }
 
 #navlist{
@@ -74,22 +92,23 @@ li a:hover{
 header{
     width: 95%;
     height: 250px;
-    background-color: #306BAC;
+    background-color: var(--elements-bg);
     margin: 30px 0px;
     border-radius: 30px;
+    border-bottom: 8px solid var(--borders);
     padding: 30px;
     display: block;
     font-family: "Bebas Neue";
     transition-duration: 0.3s;
-    border-top: 5px solid #98B9F2;
 }
 
 #leiras{
     width: 85%;
     height: 250px;
-    background-color: #6F9CEB;
+    background-color: var(--elements-bg);
     margin: 30px 0px;
     border-radius: 30px;
+    border-bottom: 8px solid var(--borders);
     padding: 30px;
     display: block;
     font-family: "Bebas Neue";
@@ -135,9 +154,10 @@ header h2{
     font-size: 2.5rem;
     height: 500px;
     width: 850px;
-    background-color: #6F9CEB;
+    background-color: var(--elements-bg);
     padding: 50px;
-    border-radius: 10px;
+    border-radius: 30px;
+    border-bottom: 8px solid var(--borders);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -151,17 +171,18 @@ header h2{
     height: auto;
     border-radius: 10px;
     object-fit: cover;
-    border: 8px solid #6F9CEB;
+    border: 8px solid var(--elements-bg);
 }
 
 hr{
-    color: #6F9CEB;
+    color: var(--borders);
+    border-radius: 50%;
 }
 
 footer{
     width: 100%;
     height: 120px;
-    background-color: #6F9CEB;
+    background-color: var(--footer);
     margin-top: 50px;
     display: flex;
     padding: 20px;
@@ -188,26 +209,6 @@ footer h2{
     cursor: pointer;
     display: none;
 }
-select{
-    background-color: #306BAC;    
-    font-family: "Bebas Neue";
-    width: 100%;
-    border: solid 2px #6F9CEB;
-    cursor: pointer;
-    padding: 0.2em 0.5em;
-    border-radius: 10px;
-    box-shadow: 0 5px 5px #6F9CEB;
-    text-align: start;
-    color: white;
-}
-
-option{
-    color: white;
-}
-
-.dropdown{
-    position: relative;
-}
 
 .responsive_text{
     font-size: 1.2rem;
@@ -217,10 +218,10 @@ option{
 
 #szemleltetes{
     margin-top: 50px;
-    border-top: 5px solid white;
-    border-bottom: 5px solid white;
+    border-top: 10px solid var(--borders);
+    border-bottom: 10px solid var(--borders);
     width: 100%;
-    background-color: #98B9F2;
+    background-color: var(--elements-bg);
     height: 800px;
     display: flex;
     justify-content: space-evenly;
@@ -232,8 +233,9 @@ option{
 .szemleltetes_elemek{
     max-width: 400px;
     height: 600px;
-    background-color: #89B6A5;
-    border: 3px solid white;
+    background-color: var(--footer);
+    border: 8px solid var(--borders);
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -285,8 +287,6 @@ option{
   }
 }
 
-
-
 @media (max-width: 1643px){
     #szemleltetes{
         height: 800px;
@@ -294,7 +294,7 @@ option{
     }
 }
 
-@media (max-width: 1543px){
+@media (max-width: 1583px){
     #szemleltetes{
         height: 1600px;
     }
@@ -357,7 +357,7 @@ option{
         font-size: 0.8rem;
     }
     #navbar{
-        height: 100px;
+        height: 130px;
     }
     #navlist{
         flex-direction: column;
@@ -434,10 +434,10 @@ option{
 
 @media (max-width: 330px) {
     header{
-        height: 360px;
+        height: 370px;
     }
     .szoveg_1{
-        height: 520px;
+        height: 535px;
     }
     .kep_2{
         min-width: 250px;
