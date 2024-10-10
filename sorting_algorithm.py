@@ -38,6 +38,7 @@ class SortingAlgorithm(ABC):
         self.deselectAll()
         self.select(idx1, idx2)
 
+        # TODO: valahogy nem pontosan cseréli ki az oszlopokat. Valahol valami egy kicsit elcsúszik.
         tempPos = self.visualizer.canvas.coords(self.visualizer.data[idx1].columnId)
         self.visualizer.canvas.moveto(self.visualizer.data[idx1].columnId, self.visualizer.canvas.coords(self.visualizer.data[idx2].columnId)[0])
         self.visualizer.canvas.moveto(self.visualizer.data[idx2].columnId, tempPos[0])

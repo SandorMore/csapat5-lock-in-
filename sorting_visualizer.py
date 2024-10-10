@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import font
 import re
 import queue
 import threading
@@ -80,6 +81,11 @@ class SortingVisualizer:
         entryFrame.rowconfigure(0, weight=1)
         entryFrame.rowconfigure(1, weight=1)
 
+        # root.entryErrorLabel
+        errorFont = font.nametofont("TkDefaultFont").copy()
+        errorFont.configure(size=8)
+        self.entryErrorLabel = ttk.Label(root, text="invalid value", font=errorFont)
+
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame
         quantityFrame = ttk.Frame(entryFrame, padding=3)
         quantityFrame.grid(column=0, row=0, columnspan=2, sticky="we")
@@ -92,38 +98,39 @@ class SortingVisualizer:
         quantityLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame.quantityEntry
-        quantityEntry = ttk.Entry(quantityFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P"))
+        quantityEntry = ttk.Entry(quantityFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
         quantityEntry.grid(column=1, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame
-        minFrame = ttk.Frame(entryFrame, padding=3)
-        minFrame.grid(column=0, row=1, sticky="we")
-        minFrame.columnconfigure(0, weight=1)
-        minFrame.columnconfigure(1, weight=1)
-        minFrame.rowconfigure(0, weight=1)
+        self.minFrame = ttk.Frame(entryFrame, padding=3)
+        self.minFrame.grid(column=0, row=1, sticky="we")
+        self.minFrame.columnconfigure(0, weight=1)
+        self.minFrame.columnconfigure(1, weight=1)
+        self.minFrame.rowconfigure(0, weight=1)
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame.minLabel
-        minLabel = ttk.Label(minFrame, text="Min:")
+        minLabel = ttk.Label(self.minFrame, text="Min:")
         minLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame.minEntry
-        self.minEntry = ttk.Entry(minFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P"))
-        self.minEntry.grid(column=1, row=0, sticky="we")
+        minEntry = ttk.Entry(self.minFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
+        minEntry.grid(column=1, row=0, sticky="we")
+
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame
-        maxFrame = ttk.Frame(entryFrame, padding=3)
-        maxFrame.grid(column=1, row=1, sticky="we")
-        maxFrame.columnconfigure(0, weight=1)
-        maxFrame.columnconfigure(1, weight=1)
-        maxFrame.rowconfigure(0, weight=1)
+        self.maxFrame = ttk.Frame(entryFrame, padding=3)
+        self.maxFrame.grid(column=1, row=1, sticky="we")
+        self.maxFrame.columnconfigure(0, weight=1)
+        self.maxFrame.columnconfigure(1, weight=1)
+        self.maxFrame.rowconfigure(0, weight=1)
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame.maxLabel
-        maxLabel = ttk.Label(maxFrame, text="Max:")
+        maxLabel = ttk.Label(self.maxFrame, text="Max:")
         maxLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame.maxEntry
-        self.maxEntry = ttk.Entry(maxFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P"))
-        self.maxEntry.grid(column=1, row=0, sticky="we")
+        maxEntry = ttk.Entry(self.maxFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
+        maxEntry.grid(column=1, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.generateDataButton
         generateDataButton = ttk.Button(optionsFrame, text="Új adat generálása", command=self.generateAndLoadData)
@@ -213,16 +220,22 @@ class SortingVisualizer:
         except queue.Empty:
             pass
 
-    def validateNumInput(self, input):
-        return input.isdigit() or input == ""
+    def validateNumInput(self, input, widget):
+        print(widget)
+        # self.entryErrorLabel.place(x=)
+        return re.match("^[0-9]*$", input) != None
+        # return input.isdigit() or input == ""
+    
+    def SetStateForAllChildren(self, state, *objects):
+        for object in objects:
+            for child in object.winfo_children():
+                child.configure(state=state)
 
     def onSelectedDataTypeChange(self, *args):
         if self.selectedDataType.get() == "num":
-            self.minEntry.state(["!disabled"])
-            self.maxEntry.state(["!disabled"])
+            self.SetStateForAllChildren(tk.NORMAL, self.minFrame, self.maxFrame)
         else:
-            self.minEntry.state(["disabled"])
-            self.maxEntry.state(["disabled"])
+            self.SetStateForAllChildren(tk.DISABLED, self.minFrame, self.maxFrame)
 
     def generateAndLoadData(self):
         # TODO: freakbob
