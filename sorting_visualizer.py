@@ -6,6 +6,7 @@ import re
 import queue
 import threading
 
+import freakbob
 import sorting_algorithm
 
 class SortingVisualizer:
@@ -16,9 +17,13 @@ class SortingVisualizer:
         self.root.bind("<<queue_call>>", self.queueHandler)
         self.selectedDataType = tk.StringVar(value="num")
         self.selectedDataType.trace_add("write", self.onSelectedDataTypeChange)
+        self.quantity = tk.Variable()
+        self.min = tk.Variable()
+        self.max = tk.Variable()
 
         self.style = ttk.Style(root)
         self.style.configure("TFrame", background="grey80")
+        # self.style.configure("TFrame.red", background="red")
 
         # root.mainFrame
         mainFrame = ttk.Frame(root, padding=10)
@@ -81,10 +86,10 @@ class SortingVisualizer:
         entryFrame.rowconfigure(0, weight=1)
         entryFrame.rowconfigure(1, weight=1)
 
-        # root.entryErrorLabel
-        errorFont = font.nametofont("TkDefaultFont").copy()
-        errorFont.configure(size=8)
-        self.entryErrorLabel = ttk.Label(root, text="invalid value", font=errorFont)
+        # # root.entryErrorLabel
+        # errorFont = font.nametofont("TkDefaultFont").copy()
+        # errorFont.configure(size=8)
+        # self.entryErrorLabel = ttk.Label(root, text="invalid value", font=errorFont)
 
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame
         quantityFrame = ttk.Frame(entryFrame, padding=3)
@@ -98,8 +103,9 @@ class SortingVisualizer:
         quantityLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame.quantityEntry
-        quantityEntry = ttk.Entry(quantityFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
+        quantityEntry = ttk.Entry(quantityFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W", self.quantity))
         quantityEntry.grid(column=1, row=0, sticky="we")
+        quantityEntry.validate()
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame
         self.minFrame = ttk.Frame(entryFrame, padding=3)
@@ -113,9 +119,9 @@ class SortingVisualizer:
         minLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame.minEntry
-        minEntry = ttk.Entry(self.minFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
+        minEntry = ttk.Entry(self.minFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W", self.min))
         minEntry.grid(column=1, row=0, sticky="we")
-
+        minEntry.validate()
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame
         self.maxFrame = ttk.Frame(entryFrame, padding=3)
@@ -129,8 +135,9 @@ class SortingVisualizer:
         maxLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame.maxEntry
-        maxEntry = ttk.Entry(self.maxFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
+        maxEntry = ttk.Entry(self.maxFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W", self.max))
         maxEntry.grid(column=1, row=0, sticky="we")
+        maxEntry.validate()
 
         # root.mainFrame.optionsFrame.generateDataButton
         generateDataButton = ttk.Button(optionsFrame, text="Új adat generálása", command=self.generateAndLoadData)
@@ -220,11 +227,17 @@ class SortingVisualizer:
         except queue.Empty:
             pass
 
-    def validateNumInput(self, input, widget):
-        print(widget)
-        # self.entryErrorLabel.place(x=)
-        return re.match("^[0-9]*$", input) != None
-        # return input.isdigit() or input == ""
+    def validateNumInput(self, input, widgetName, varName):
+        # self.root.nametowidget(widgetName).configure(style="TFrame.red")
+        if re.match("^[0-9]*$", input) != None:
+            if input == "":
+                self.root.setvar(varName, "")
+            else:
+                self.root.setvar(varName, int(input))
+            print(self.root.getvar(varName))
+            return True
+        print(self.root.getvar(varName))
+        return False
     
     def SetStateForAllChildren(self, state, *objects):
         for object in objects:
@@ -238,12 +251,31 @@ class SortingVisualizer:
             self.SetStateForAllChildren(tk.DISABLED, self.minFrame, self.maxFrame)
 
     def generateAndLoadData(self):
-        # TODO: freakbob
-        self.getDataFromFile("ki_test_1.txt")
+        quantity = self.quantity.get()
+        minV = self.min.get()
+        maxV = self.max.get()
+        if quantity == "":
+            self.showErrorMessage("Adj meg egy mennyiséget!")
+            return
+        elif quantity < 2:
+            self.showErrorMessage("A mennyiség nem lehet kisebb mint 2.")
+            return
+        if self.selectedDataType.get() == "num":
+            if minV == "" and maxV == "":
+                self.showErrorMessage("Adj meg minimum és maximum értékeket!")
+                return
+            if minV > maxV:
+                self.showErrorMessage("A minimum érték nem lehet nagyobb a maximum értéknél.")
+                return
+            freakbob.Szam_Gen(quantity, minV, maxV)
+        else:
+            freakbob.Szo_Gen(self.quantity)
+        self.getDataFromFile("ki.txt")
         self.drawColumns()
 
     def getDataFromFile(self, filename):
         self.data = None
+        self.canvas.delete("column")
 
         try:
             with open(filename, "r", encoding="utf-8") as f:
@@ -274,7 +306,7 @@ class SortingVisualizer:
     def drawColumns(self):
         self.canvas.delete("column")
         values = [x.value for x in self.data]
-        minV = min(values)
+        # minV = min(values)
         maxV = max(values)
 
         cWidth = self.canvas.winfo_width()
@@ -283,7 +315,8 @@ class SortingVisualizer:
         barWidth = barAreaWidth*0.8
 
         for i,item in enumerate(self.data):
-            item.columnId = self.canvas.create_rectangle(barAreaWidth*i+(barAreaWidth-barWidth)/2, cHeight, barAreaWidth*i+(barAreaWidth-barWidth)/2+barWidth, cHeight-5-((item.value-minV)/(maxV-minV)*cHeight*0.8), tags=("column"))
+            # item.columnId = self.canvas.create_rectangle(barAreaWidth*i+(barAreaWidth-barWidth)/2, cHeight, barAreaWidth*i+(barAreaWidth-barWidth)/2+barWidth, cHeight-5-((item.value-minV)/(maxV-minV)*cHeight*0.8), tags=("column"))
+            item.columnId = self.canvas.create_rectangle(barAreaWidth*i+(barAreaWidth-barWidth)/2, cHeight, barAreaWidth*i+(barAreaWidth-barWidth)/2+barWidth, cHeight-5-(item.value/maxV*cHeight*0.8), tags=("column"))
         self.updateCanvas()
 
     def updateCanvas(self):
