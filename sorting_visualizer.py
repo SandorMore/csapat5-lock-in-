@@ -1,15 +1,22 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import font
 import re
+import queue
+import threading
+
+import sorting_algorithm
 
 class SortingVisualizer:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.data = None
-        self.textData = False
-        self.radiobuttonIsText = tk.BooleanVar(value=False)
-        
+        self.callQueue = queue.Queue()
+        self.root.bind("<<queue_call>>", self.queueHandler)
+        self.selectedDataType = tk.StringVar(value="num")
+        self.selectedDataType.trace_add("write", self.onSelectedDataTypeChange)
+
         self.style = ttk.Style(root)
         self.style.configure("TFrame", background="grey80")
 
@@ -59,11 +66,11 @@ class SortingVisualizer:
         radiobuttonsFrame.grid(column=0, row=1, sticky="ew")
 
         # root.mainFrame.optionsFrame.radiobuttonsFrame.numbersRadiobutton
-        numbersRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="numbers", variable=self.radiobuttonIsText, value=False)
+        numbersRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="numbers", variable=self.selectedDataType, value="num")
         numbersRadiobutton.grid(column=0, row=0, sticky="w")
 
         # root.mainFrame.optionsFrame.radiobuttonsFrame.textRadiobutton
-        textRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="text", variable=self.radiobuttonIsText, value=True)
+        textRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="text", variable=self.selectedDataType, value="text")
         textRadiobutton.grid(column=0, row=1, sticky="w")
 
         # root.mainFrame.optionsFrame.entryFrame
@@ -73,6 +80,11 @@ class SortingVisualizer:
         entryFrame.columnconfigure(1, weight=1)
         entryFrame.rowconfigure(0, weight=1)
         entryFrame.rowconfigure(1, weight=1)
+
+        # root.entryErrorLabel
+        errorFont = font.nametofont("TkDefaultFont").copy()
+        errorFont.configure(size=8)
+        self.entryErrorLabel = ttk.Label(root, text="invalid value", font=errorFont)
 
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame
         quantityFrame = ttk.Frame(entryFrame, padding=3)
@@ -86,37 +98,38 @@ class SortingVisualizer:
         quantityLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame.quantityEntry
-        quantityEntry = ttk.Entry(quantityFrame, width=3)
+        quantityEntry = ttk.Entry(quantityFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
         quantityEntry.grid(column=1, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame
-        minFrame = ttk.Frame(entryFrame, padding=3)
-        minFrame.grid(column=0, row=1, sticky="we")
-        minFrame.columnconfigure(0, weight=1)
-        minFrame.columnconfigure(1, weight=1)
-        minFrame.rowconfigure(0, weight=1)
+        self.minFrame = ttk.Frame(entryFrame, padding=3)
+        self.minFrame.grid(column=0, row=1, sticky="we")
+        self.minFrame.columnconfigure(0, weight=1)
+        self.minFrame.columnconfigure(1, weight=1)
+        self.minFrame.rowconfigure(0, weight=1)
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame.minLabel
-        minLabel = ttk.Label(minFrame, text="Min:")
+        minLabel = ttk.Label(self.minFrame, text="Min:")
         minLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.minFrame.minEntry
-        minEntry = ttk.Entry(minFrame, width=3)
+        minEntry = ttk.Entry(self.minFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
         minEntry.grid(column=1, row=0, sticky="we")
 
+
         # root.mainFrame.optionsFrame.entryFrame.maxFrame
-        maxFrame = ttk.Frame(entryFrame, padding=3)
-        maxFrame.grid(column=1, row=1, sticky="we")
-        maxFrame.columnconfigure(0, weight=1)
-        maxFrame.columnconfigure(1, weight=1)
-        maxFrame.rowconfigure(0, weight=1)
+        self.maxFrame = ttk.Frame(entryFrame, padding=3)
+        self.maxFrame.grid(column=1, row=1, sticky="we")
+        self.maxFrame.columnconfigure(0, weight=1)
+        self.maxFrame.columnconfigure(1, weight=1)
+        self.maxFrame.rowconfigure(0, weight=1)
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame.maxLabel
-        maxLabel = ttk.Label(maxFrame, text="Max:")
+        maxLabel = ttk.Label(self.maxFrame, text="Max:")
         maxLabel.grid(column=0, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.entryFrame.maxFrame.maxEntry
-        maxEntry = ttk.Entry(maxFrame, width=3)
+        maxEntry = ttk.Entry(self.maxFrame, width=3, validate="key", validatecommand=(self.root.register(self.validateNumInput), "%P", "%W"))
         maxEntry.grid(column=1, row=0, sticky="we")
 
         # root.mainFrame.optionsFrame.generateDataButton
@@ -146,7 +159,7 @@ class SortingVisualizer:
         playButtonHolder.grid(column=1, row=0)
         playButtonHolder.pack_propagate(False)
 
-        playButton = ttk.Button(playButtonHolder)
+        playButton = ttk.Button(playButtonHolder, command=self.test)
         playButton.pack(fill=tk.BOTH, expand=True)
 
         # root.mainFrame.mediaFrame.backButtonHolder.backButton
@@ -177,6 +190,53 @@ class SortingVisualizer:
         speedScale.set(1)
         speedScale.grid(column=0, row=0, sticky="ew")
 
+    class DataItem:
+        def __init__(self, value, toDisplay = None, columnId = None):
+            self.value = value
+            self.toDisplay = toDisplay if toDisplay else str(value)
+            self.columnId = columnId
+    
+    class CallData:
+        def __init__(self, func, args, kwargs):
+            self.func = func
+            self.args = args
+            self.kwargs = kwargs
+            self.reply = None
+            self.replyEvent = threading.Event()
+    
+    def callOnMainThread(self, func, *args, **kwargs):
+        callData = self.CallData(func, args, kwargs)
+        self.callQueue.put(callData)
+        self.root.event_generate("<<queue_call>>", when="tail")
+        callData.replyEvent.wait()
+        return callData.reply
+
+    def queueHandler(self, event):
+        try:
+            while True:
+                callData = self.callQueue.get_nowait()
+                callData.reply = callData.func(*callData.args, **callData.kwargs)
+                callData.replyEvent.set()
+        except queue.Empty:
+            pass
+
+    def validateNumInput(self, input, widget):
+        print(widget)
+        # self.entryErrorLabel.place(x=)
+        return re.match("^[0-9]*$", input) != None
+        # return input.isdigit() or input == ""
+    
+    def SetStateForAllChildren(self, state, *objects):
+        for object in objects:
+            for child in object.winfo_children():
+                child.configure(state=state)
+
+    def onSelectedDataTypeChange(self, *args):
+        if self.selectedDataType.get() == "num":
+            self.SetStateForAllChildren(tk.NORMAL, self.minFrame, self.maxFrame)
+        else:
+            self.SetStateForAllChildren(tk.DISABLED, self.minFrame, self.maxFrame)
+
     def generateAndLoadData(self):
         # TODO: freakbob
         self.getDataFromFile("ki_test_1.txt")
@@ -184,7 +244,6 @@ class SortingVisualizer:
 
     def getDataFromFile(self, filename):
         self.data = None
-        self.textData = False
 
         try:
             with open(filename, "r", encoding="utf-8") as f:
@@ -194,33 +253,45 @@ class SortingVisualizer:
             return
 
         if re.match("^([0-9]+;)+[0-9]+$", content):
-            self.data = list(map(int, content.split(";")))
+            self.data = [self.DataItem(int(s), s) for s in content.split(";")]
         elif re.match("^([a-zA-Z]+;)+[a-zA-Z]+$", content):
-            self.textData = True
             self.data = self.assignValuesToStrings(content.split(";"))
         else:
             self.showErrorMessage("A legenerált file-ban helytelen az adatszerkezet.")
-    
+
     def showErrorMessage(self, message):
         messagebox.showerror(message=message)
-    
+
     def assignValuesToStrings(self, textData):
         toReturn = []
         for s in map(str.lower, textData):
             value = 0
             for i,c in enumerate(s):
                 value += (ord(c)-ord('a'))/26**(i+1)
-            toReturn.append((s, value))
+            toReturn.append(self.DataItem(value, s))
         return toReturn
-    
-    def drawColumns(self):
-        values = self.data if not self.textData else list(map(lambda x: x[1], self.data))
 
+    def drawColumns(self):
+        self.canvas.delete("column")
+        values = [x.value for x in self.data]
         minV = min(values)
         maxV = max(values)
+
         cWidth = self.canvas.winfo_width()
         cHeight = self.canvas.winfo_height()
         barAreaWidth = cWidth/len(self.data)
+        barWidth = barAreaWidth*0.8
 
-        for i,value in enumerate(values):
-            self.canvas.create_rectangle(barAreaWidth*i+barAreaWidth*0.1, cHeight, barAreaWidth*i+barAreaWidth*0.9, cHeight-5-((value-minV)/(maxV-minV)*cHeight*0.8))
+        for i,item in enumerate(self.data):
+            item.columnId = self.canvas.create_rectangle(barAreaWidth*i+(barAreaWidth-barWidth)/2, cHeight, barAreaWidth*i+(barAreaWidth-barWidth)/2+barWidth, cHeight-5-((item.value-minV)/(maxV-minV)*cHeight*0.8), tags=("column"))
+        self.updateCanvas()
+
+    def updateCanvas(self):
+        self.canvas.itemconfigure("column", fill="grey70")
+        self.canvas.itemconfigure("incorrect", fill="red")
+        self.canvas.itemconfigure("correct", fill="green")
+
+    def test(self):
+        if self.data:
+            algorithm = sorting_algorithm.BubbleSort(self)
+            threading.Thread(target=algorithm.sort, daemon=True).start()

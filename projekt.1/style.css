@@ -1,13 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
+html{
+    scroll-behavior: smooth;
+}
+
+:root{
+    --bg-color: #1F1300;
+    --elements-bg: #f7934c;
+    --borders: #CC5803;
+    --szemleltetes: #F7B05B;
+    --footer: #FFC15E;
+}
+
 *{
     margin: 0;
     padding:0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+}
+
+p{
+    color: white;
 }
 
 body{
+    background-color: var(--bg-color);
     font-family: "Bebas Neue";
 }
 
@@ -15,7 +31,7 @@ li a{
     font-family: "Bebas Neue";
     font-size: 1.5rem;
     font-weight: lighter;
-    color: black;
+    color: rgb(255, 255, 255);
     text-decoration: none;
     transition-duration: 0.3s;
 }
@@ -27,17 +43,20 @@ li a{
     padding: 50px;
 }
 
-#home{
+#home a{
     font-family: "Bebas Neue";
-    font-size: 2em;
+    font-size: 2.5em;
     font-weight: bold;
     font-style: italic;
     transition-duration: 0.3s;
+    color: rgb(255, 255, 255);
 }
 
 #home:hover{
     cursor: default;
-    font-size: 2.2em;
+    font-size: 1.3em;
+    color: var(--footer);
+    text-shadow: 2px var(--footer);
 }
 
 .nav-links{
@@ -47,27 +66,22 @@ li a{
 }
 
 li a:hover{
-    color: #edf0da;
+    color: var(--footer);
     font-size: 1.6rem;
 }
 
-body{
-    /* színek: 
-    rasberry rose: #AA4465
-    beige: edf0da
-    khaki: a89b8c
-    vanilla: f0dfad
-    raw umber: 8f5c38
-    erm what the sigma?
-    */
-}
-
 #navbar{
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     align-items: center;
-    background-color: #AA4465;
-    height: 50px;
+    background-color: var(--elements-bg);
+    height: 60px;
     width: 100%;
+    border-bottom-left-radius: 20%;
+    border-bottom-right-radius: 20%;
+    border-bottom: 5px solid var(--borders);
 }
 
 #navlist{
@@ -76,14 +90,14 @@ body{
     list-style: none;
 }
 header{
-    width: 85%;
+    width: 95%;
     height: 250px;
-    background-color: #AA4465;
+    background-color: var(--elements-bg);
     margin: 30px 0px;
     border-radius: 30px;
+    border-bottom: 8px solid var(--borders);
     padding: 30px;
     display: block;
-    font-weight: bold;
     font-family: "Bebas Neue";
     transition-duration: 0.3s;
 }
@@ -91,19 +105,25 @@ header{
 #leiras{
     width: 85%;
     height: 250px;
-    background-color: #AA4465;
+    background-color: var(--elements-bg);
     margin: 30px 0px;
     border-radius: 30px;
+    border-bottom: 8px solid var(--borders);
     padding: 30px;
     display: block;
-    font-weight: bold;
     font-family: "Bebas Neue";
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 header h2{
+    font-family: "Bebas Neue";
     font-size: 2.5rem;
     margin-bottom: 10px;
     text-align: center;
+    color: rgb(255, 255, 255);
 }
 
 .container{
@@ -115,83 +135,311 @@ header h2{
 #hatekonysag{
     width: 100%;
     height: 600px;
-    background-color: #a89b8c;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    gap: 25px;
+    padding: 20px;
 }
 #tarigeny{
     width: 100%;
     height: 600px;
-    background-color: #edf0da;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    gap: 25px;
+    padding: 20px;
 }
 
 .szoveg_1{
     font-family: "Bebas Neue";
     font-size: 2.5rem;
     height: 500px;
-    width: 750px;
-    background-color: #AA4465;
-    padding: 30px;
-    border-radius: 10px;
+    width: 850px;
+    background-color: var(--elements-bg);
+    padding: 50px;
+    border-radius: 30px;
+    border-bottom: 8px solid var(--borders);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: white;
+    margin: 20px;
 }
 
-.szoveg_1 p{
-    font-size: 1rem;
-}
-
-.kep{
-    width: 500px;
-    height: 500px;
+.kep_1{
+    max-width: 40%;
+    min-width: 500px;
+    height: auto;
     border-radius: 10px;
     object-fit: cover;
+    border: 8px solid var(--elements-bg);
 }
 
-.szemleltetes{
-    font-family: "Bebas Neue";
-    font-size: 2.5rem;
-    height: 500px;
-    width: 750px;
-    background-color: #AA4465;
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-#szemleltetes{
-    margin-top: 50px;
-    gap: 50px;
-    
+hr{
+    color: var(--borders);
+    border-radius: 50%;
 }
 
 footer{
     width: 100%;
-    height: 500px;
-    background-color: #edf0da;
+    height: 120px;
+    background-color: var(--footer);
     margin-top: 50px;
     display: flex;
-    padding: 100px;
+    padding: 20px;
     gap: 20px;
-    align-items: center;
+    flex-direction: column;
 }
 
-.footer{
-    background-color: #AA4465;
-    width: 50%;
-    height: 300px;
+footer h2{
+    color: white;
+    font-weight: lighter;
+}
+
+.szoveg_h2{
+    margin-bottom: 20px;
+}
+
+.dropdown {
+    display: none; /* Alapértelmezetten elrejtve */
+}
+
+.dropdown{
+    max-width: 150px;
+    height: 35px;
+    cursor: pointer;
+    display: none;
+}
+
+.responsive_text{
+    font-size: 1.2rem;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+#szemleltetes{
+    margin-top: 50px;
+    border-top: 10px solid var(--borders);
+    border-bottom: 10px solid var(--borders);
+    width: 100%;
+    background-color: var(--elements-bg);
+    height: 800px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 50px;
+}
+
+.szemleltetes_elemek{
+    max-width: 400px;
+    height: 600px;
+    background-color: var(--footer);
+    border: 8px solid var(--borders);
     border-radius: 20px;
     display: flex;
-    text-align: center;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 35px 20px 0px 70px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 10px 20px;
+    margin: 20px 20px;
 }
 
-.footer_li:not(:last-child){
-    margin-bottom: 50px;
+.elem_2{
+    max-width: 250px;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.kep_2{
+    max-width: 40%;
+    min-width: 300px;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+@keyframes glow {
+  0% {
+    border-color: red;
+  }
+  25% {
+    border-color: blue;
+  }
+  75% {
+    border-color: yellow;
+  }
+  100% {
+    border-color: purple;
+  }
+}
+@-webkit-keyframes glow {
+  0% {
+    border-color: red;
+  }
+  25% {
+    border-color: blue;
+  }
+  75% {
+    border-color: yellow;
+  }
+  100% {
+    border-color: purple;
+  }
+}
+
+@media (max-width: 1643px){
+    #szemleltetes{
+        height: 800px;
+        padding: 0px;
+    }
+}
+
+@media (max-width: 1583px){
+    #szemleltetes{
+        height: 1600px;
+    }
+}
+
+@media (max-width: 1200px){
+    .responsive_text{
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 1090px){
+    .responsive_text{
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 1040px){
+    .szoveg_1 p{
+        font-size: 0.92rem;
+    }
+    footer{
+        height: 200px;
+    }
+}
+
+@media (max-width: 900px){
+    #hatekonysag{
+        flex-wrap: wrap;
+        height: 1000px;            
+    }
+    #tarigeny{
+        flex-wrap: wrap;
+        height: 1000px;
+    }
+    header{
+        font-size: 0.8rem;
+    }
+    .szoveg_1{
+        height: 400px;
+        width: 750px;
+    }
+
+    #leiras{
+        font-size: 0.8rem;
+    }
+    .responsive_text{
+        font-size: 0.9rem;
+    }
+}
+
+@media(max-width: 771px){
+    #szemleltetes{
+        height: 2800px;
+    }
+}
+
+@media (max-width: 600px) {
+    header{
+        font-size: 0.8rem;
+    }
+    #navbar{
+        height: 130px;
+    }
+    #navlist{
+        flex-direction: column;
+        gap: 10px;
+    }
+    .responsive_text{
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 540px){
+    .kep_1{
+        min-width: 300px;
+    }
+    #hatekonysag{
+        flex-wrap: wrap;
+        height: 850px;            
+    }
+    #tarigeny{
+        flex-wrap: wrap;
+        height: 850px;
+    }
+    .szoveg_1{
+        height: 500px;
+        padding: 20px;
+    }
+}
+
+@media(max-width: 500px){
+    .szemleltetes_elemek{
+        min-width: 300px;
+    }
+    header{
+        height: 300px;
+    }
+}
+
+@media (max-width: 425px){
+    li a{
+        font-size: 1.2rem;
+    }
+    
+}
+
+@media(max-width: 375px){
+    .kep_2{
+        max-width: 250px;
+    }
+    footer{
+        height: 250px;
+    }
+    #leiras{
+        height: 400px;
+    }
+    header{
+        height: 335px;
+    }
+    li a{
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 340px){
+    .kep_1{
+        min-width: 280px;
+    }
+    .kep_2{
+        min-width: 280px;
+    }
+    .szemleltetes_elemek{
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 330px) {
+    header{
+        height: 370px;
+    }
+    .szoveg_1{
+        height: 535px;
+    }
+    .kep_2{
+        min-width: 250px;
+    }
 }
