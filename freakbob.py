@@ -6,13 +6,14 @@ import time
 # from distutils.command.install_egg_info import to_filename
 
 
-szamlista = []
+
 kisbetuk = list(string.ascii_lowercase)
 nagybetuk = list(string.ascii_uppercase)
 angol_abc = kisbetuk + nagybetuk
 
 
 def Szam_Gen(x = None, num1 = None, num2 = None):
+    szamlista = []
     if x == None:
         x = int(input("Hányszor generáljon számot: "))
     if num1 == None:
@@ -997,5 +998,5 @@ if __name__ == "__main__":
 
 
 
-if kerdes == "secret":
-    import brabasi
+    if kerdes == "secret":
+        import brabasi
