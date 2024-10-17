@@ -91,15 +91,18 @@ li a:hover{
 }
 header{
     width: 95%;
-    height: 250px;
-    background-color: var(--elements-bg);
+    height: 200px;
     margin: 30px 0px;
     border-radius: 30px;
-    border-bottom: 8px solid var(--borders);
     padding: 30px;
     display: block;
     font-family: "Bebas Neue";
     transition-duration: 0.3s;
+    h2{
+        width: 100%;
+        height: 50px;
+        background-color: var(--elements-bg);
+    }
 }
 
 #leiras{
@@ -152,7 +155,7 @@ header h2{
 .szoveg_1{
     font-family: "Bebas Neue";
     font-size: 2.5rem;
-    height: 500px;
+    height: 560px;
     width: 850px;
     background-color: var(--elements-bg);
     padding: 50px;
@@ -403,7 +406,15 @@ footer h2{
     li a{
         font-size: 1.2rem;
     }
-    
+    header{
+        h2{
+            height: 40px;
+            font-size: 1.8rem;
+        }
+    }
+    .szemleltetes_elemek{
+        min-width: 200px;
+    }
 }
 
 @media(max-width: 375px){
@@ -426,13 +437,10 @@ footer h2{
 
 @media (max-width: 340px){
     .kep_1{
-        min-width: 280px;
+        min-width: 250px;
     }
     .kep_2{
-        min-width: 280px;
-    }
-    .szemleltetes_elemek{
-        min-width: 280px;
+        width: 200px;
     }
 }
 
@@ -444,6 +452,6 @@ footer h2{
         height: 535px;
     }
     .kep_2{
-        min-width: 250px;
+        width: 200px;
     }
 }

@@ -12,8 +12,8 @@
         <ul id="navlist">
             <li id="home"><a href="#">home</a></li>
             <div class="nav-links">
-                <li class="nav-link"><a href="#hatekonysag">Hatékonyság</a></li>
-                <li class="nav-link"><a href="#tarigeny">Tárigény</a></li>
+                <li class="nav-link"><a href="#hatekonysag_vonal">Hatékonyság</a></li>
+                <li class="nav-link"><a href="#tarigeny_vonal">Tárigény</a></li>
                 <li class="nav-link"><a href="#szemleltetes">Szemléltetés</a></li>
                 <li class="nav-link"><a href="#footer">Footer</a></li>
             </div>
@@ -22,36 +22,76 @@
 
     <div class="container">
         <header>
-            <h2>Algoritmus</h2>
-            <p class="responsive_text">Nulla sed sem tortor. Vestibulum ut ullamcorper sem, sit amet posuere ante. Morbi vel feugiat mauris. Sed vestibulum magna at tellus volutpat, sed vestibulum diam scelerisque. Nam dui felis, interdum iaculis felis vitae, interdum interdum tortor. Vestibulum faucibus enim massa, vel interdum velit malesuada at. Ut feugiat eleifend consequat. Duis fermentum magna purus, et lobortis neque varius ac. Etiam faucibus dolor non felis convallis posuere. Praesent sed ultrices lacus. Ut eget cursus odio, at varius metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque arcu orci, efficitur in auctor in, semper in augue.</p>
+            <h2>Buborékrendezés</h2>
+            <br>
+            <p class="responsive_text">A buborékrendezés (angolul: Bubble sort) egy naiv algoritmus, amellyel egy véges (nem feltétlenül numerikus) sorozat – vagy számítástechnikai szóhasználattal élve egy tömb – elemei sorba rendezhetők [(n-1)n]/2 összehasonlítás elvégzésével, ahol n a sorozat elemeinek számát jelenti.</p>
+            <br>
+            <p class="responsive_text">A Bubble Sort folyamatosan átlép a listán, összehasonlítja a szomszédos elemeket, és cseréli őket, ha rossz sorrendben vannak. Ezt a folyamatot addig ismételjük, amíg a lista rendezetté nem válik.</p>            
         </header>
     </div>
-    
+
+    <div class="container">
+        <div id="leiras" class="container">
+            <p class="responsive_text">Az algoritmus újra és újra végigiterál a listán, összehasonlítja a lista szomszédos elemeit, és ha azok az elvárt rendezéshez képest fordítva vannak, akkor megcseréli őket. Első menetben a lista elejéről indul és a végéig megy. Ennek az első menetnek az eredményeként a legnagyobb elem (mint egy buborék) felszáll a lista végére. Így a következő menetben már elegendő az utolsó előtti elemig elvégezni a szomszédos elemek összehasonlítását és cseréjét. Az ezután következő menetben a lista utolsó két eleme lesz a helyén és így tovább...</p>
+        </div>
+    </div>
+
+    <hr id="hatekonysag_vonal" style="margin: auto;" size="10px" width="90%" color="#CC5803">
+
     <main id="hatekonysag">
         <div class="szoveg_1"
             <h2 class="szoveg_h2">Hatékonyság</h2>
-            <p class="responsive_text">Nulla sed sem tortor. Vestibulum ut ullamcorper sem, sit amet posuere ante. Morbi vel feugiat mauris. Sed vestibulum magna at tellus volutpat, sed vestibulum diam scelerisque. Nam dui felis, interdum iaculis felis vitae, interdum interdum tortor. Vestibulum faucibus enim massa, vel interdum velit malesuada at.</p>
-            <p class="responsive_text">Ut feugiat eleifend consequat. Duis fermentum magna purus, et lobortis neque varius ac. Etiam faucibus dolor non felis convallis posuere. Praesent sed ultrices lacus. Ut eget cursus odio, at varius metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque arcu orci, efficitur in auctor in, semper in augue.</p>
+            <p class="responsive_text">A buborékrendezés hatékonysága általában alacsony, különösen nagyobb adathalmazon. Itt van egy részletesebb áttekintés a hatékonyságáról:</p>
+            <p class="responsive_text"><b>Legrosszabb Eset:</b>
+
+                𝑂
+                (
+                𝑛
+                2
+                )
+                O(n 
+                2
+                 ) — Ez akkor fordul elő, ha a lista fordított sorrendben van, és minden lehetséges cserét el kell végezni.
+                 <br>
+                 <br>
+                <b>Legjobb Eset:</b>
+                
+                𝑂
+                (
+                𝑛
+                )
+                O(n) — Ha a lista már rendezett, és a algoritmus optimalizálva van arra, hogy ellenőrizze, történt-e csere az átmenet során. Ekkor csak egy végigjárás szükséges.
+                <br>
+                 <br>
+                <b>Átlagos Eset:</b>
+                
+                𝑂
+                (
+                𝑛
+                2
+                )
+                O(n 
+                2
+                 ) — Átlagosan, a legtöbb esetben a buborékrendezés két bejárásra van szüksége az elemek összehasonlításához és cseréjéhez.</p>
         </div>
         <img class="kep_1" src="pictures/istockphoto-1324356458-612x612.jpg" alt="">
     </main>
 
-    <hr id="vonal" style="margin: auto;" size="10px" width="90%" color="#CC5803">
+    <hr id="tarigeny_vonal" style="margin: auto;" size="10px" width="90%" color="#CC5803">
 
     <main id="tarigeny">
         <img class="kep_1" src="pictures/istockphoto-1324356458-612x612.jpg" alt="">
         <div class="szoveg_1"
             <h2 class="szoveg_h2">Tárigény</h2>
-            <p class="responsive_text">Nulla sed sem tortor. Vestibulum ut ullamcorper sem, sit amet posuere ante. Morbi vel feugiat mauris. Sed vestibulum magna at tellus volutpat, sed vestibulum diam scelerisque. Nam dui felis, interdum iaculis felis vitae, interdum interdum tortor.</p> 
-            <p class="responsive_text"> Vestibulum faucibus enim massa, vel interdum velit malesuada at. Ut feugiat eleifend consequat. Duis fermentum magna purus, et lobortis neque varius ac. Etiam faucibus dolor non felis convallis posuere. </p> <p class="responsive_text">Praesent sed ultrices lacus. Ut eget cursus odio, at varius metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque arcu orci, efficitur in auctor in, semper in augue.</p>
+            <p class="responsive_text">Tárigény: 
+                O(1)
+                <br>
+                Ez azt jelenti, hogy a buborékrendezés algoritmusának nem szükséges extra memória a rendezéshez, csak a bemeneti lista tárolására. A rendezés helyben történik, így a tárigénye minimális.</p> 
+            <p class="responsive_text"> Hogyan működik?
+                <br>
+                Az algoritmus csak néhány segédváltozót használ (például az aktuális indexek tárolására a cserékhez), de ezek az extra változók nem függnek a bemeneti adathalmazon, tehát a tárigény konstans marad.</p> <p class="responsive_text">A buborékrendezés alacsony tárigénye miatt előnyös lehet kisebb listák vagy memóriaérzékeny környezetek esetén, de a teljesítmény szempontjából más, hatékonyabb algoritmusokat érdemes fontolóra venni nagyobb adathalmazok esetén.</p>
         </div>
     </main>
-
-    <div class="container">
-        <div id="leiras" class="container">
-            <p class="responsive_text">Nulla sed sem tortor. Vestibulum ut ullamcorper sem, sit amet posuere ante. Morbi vel feugiat mauris. Sed vestibulum magna at tellus volutpat, sed vestibulum diam scelerisque. Nam dui felis, interdum iaculis felis vitae, interdum interdum tortor. Vestibulum faucibus enim massa, vel interdum velit malesuada at. Ut feugiat eleifend consequat. Duis fermentum magna purus, et lobortis neque varius ac. Etiam faucibus dolor non felis convallis posuere. Praesent sed ultrices lacus. Ut eget cursus odio, at varius metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque arcu orci, efficitur in auctor in, semper in augue.</p>
-        </div>
-    </div>
 
     <div id="szemleltetes">
         <div class="szemleltetes_elemek">
