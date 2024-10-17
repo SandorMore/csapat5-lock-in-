@@ -344,7 +344,11 @@ footer h2{
     .responsive_text{
         font-size: 0.9rem;
     }
+    #szemleltetes{
+        flex-direction: column;
+    }
 }
+
 
 @media(max-width: 771px){
     #szemleltetes{
