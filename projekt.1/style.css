@@ -243,7 +243,7 @@ footer h2{
 
 .szemleltetes_elemek{
     max-width: 400px;
-    height: 400px;
+    height: auto;
     background-color: var(--footer);
     border: 8px solid var(--borders);
     border-radius: 20px;

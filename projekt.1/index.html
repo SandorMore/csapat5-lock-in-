@@ -102,7 +102,7 @@
             <div class="elem_1"><img class="kep_2" src="pictures/image_Geri_1.png" width="300px" alt=""></div>
         </div>
         <div id="szem4" class="szemleltetes_elemek">
-            <div class="elem_1"><img class="kep_2" src="" width="300px" alt=""></div>
+            <div class="elem_1"><img class="kep_2" src="pictures/image_Geri_2.png" width="300px" alt=""></div>
         </div>
     </div>
 
@@ -119,7 +119,18 @@
         </p>
     </footer>
 
-    <script src="projekt.js"></script>
-    <script src="scroll_effekt.js"></script> 
+    <script>
+        document.querySelectorAll('.kep_2').forEach(img => {
+            img.addEventListener('click', function() {
+                if (this.style.transform === "scale(2)") {
+                    this.style.transform = "scale(1)";
+                    this.style.z_index = 9999;
+                } else {
+                    this.style.transform = "scale(2)";
+                    this.style.z_index = 9999;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
