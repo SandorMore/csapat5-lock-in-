@@ -5,6 +5,7 @@ from tkinter import font
 import re
 import queue
 import threading
+import time
 
 import freakbob
 import sorting_algorithm
@@ -12,18 +13,35 @@ import sorting_algorithm
 class SortingVisualizer:
     def __init__(self, root: tk.Tk):
         self.root = root
+        self.root.title("Rendezési algoritmusok")
         self.data = None
-        self.callQueue = queue.Queue()
-        self.root.bind("<<queue_call>>", self.queueHandler)
+        self.steps = []
+        self.currentStep = 0
         self.selectedDataType = tk.StringVar(value="num")
         self.selectedDataType.trace_add("write", self.onSelectedDataTypeChange)
+        self.selectedSortDirection = tk.StringVar(value="asc")
         self.quantity = tk.Variable()
         self.min = tk.Variable()
         self.max = tk.Variable()
+        self.lastStepTime = time.perf_counter()
+        self.stepDelay = tk.DoubleVar()
+        self.stepCycleLoopRunning = False
+        self.algoritms = {
+            "Bubble sort": sorting_algorithm.BubbleSort,
+            "Improved Bubble Sort": sorting_algorithm.ImprovedBubbleSort,
+            "Selection sort": sorting_algorithm.SelectionSort,
+        }
+        self.colors = {
+            "red": "red",
+            "green": "green",
+            "lightgreen": "lightgreen",
+            "lightred": "#FF7F7F",
+            "yellow": "yellow",
+            "blue": "blue",
+        }
 
         self.style = ttk.Style(root)
         self.style.configure("TFrame", background="grey80")
-        # self.style.configure("TFrame.red", background="red")
 
         # root.mainFrame
         mainFrame = ttk.Frame(root, padding=10)
@@ -45,12 +63,12 @@ class SortingVisualizer:
         self.canvas.grid(column=0, row=0, sticky="nsew")
 
         # root.mainFrame.canvasFrame.progressbarHolder.progressbar
-        progressbarHolder = ttk.Frame(canvasFrame, height=5)
-        progressbarHolder.grid(column=0, row=1, sticky="ew")
+        progressbarHolder = ttk.Frame(canvasFrame, height=6)
+        progressbarHolder.grid(column=0, row=1, sticky="nsew")
         progressbarHolder.pack_propagate(False)
 
-        progressbar = ttk.Progressbar(progressbarHolder)
-        progressbar.pack(fill=tk.BOTH, expand=True)
+        self.progressbar = ttk.Progressbar(progressbarHolder)
+        self.progressbar.pack(fill=tk.BOTH, expand=True)
 
         # root.mainFrame.optionsFrame
         optionsFrame = ttk.Frame(mainFrame, width=200, padding=10)
@@ -61,35 +79,45 @@ class SortingVisualizer:
         optionsFrame.rowconfigure(1, weight=1)
         optionsFrame.rowconfigure(2, weight=1)
         optionsFrame.rowconfigure(3, weight=1)
+        optionsFrame.rowconfigure(4, weight=3)
 
         # root.mainFrame.optionsFrame.algorithmCombobox
-        algorithmCombobox = ttk.Combobox(optionsFrame)
-        algorithmCombobox.grid(column=0, row=0, sticky="ew")
+        self.algorithmCombobox = ttk.Combobox(optionsFrame, state="readonly", values=list(self.algoritms.keys()))
+        self.algorithmCombobox.grid(column=0, row=0, sticky="ew")
+        self.algorithmCombobox.current(0)
 
-        # root.mainFrame.optionsFrame.radiobuttonsFrame
-        radiobuttonsFrame = ttk.Frame(optionsFrame)
-        radiobuttonsFrame.grid(column=0, row=1, sticky="ew")
+        # root.mainFrame.optionsFrame.dataTypeRadiobuttonsFrame
+        dataTypeRadiobuttonsFrame = ttk.Frame(optionsFrame)
+        dataTypeRadiobuttonsFrame.grid(column=0, row=1, sticky="ew")
+        # dataTypeRadiobuttonsFrame.rowconfigure(2, minsize=10)
 
-        # root.mainFrame.optionsFrame.radiobuttonsFrame.numbersRadiobutton
-        numbersRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="numbers", variable=self.selectedDataType, value="num")
+        # root.mainFrame.optionsFrame.dataTypeRadiobuttonsFrame.numbersRadiobutton
+        numbersRadiobutton = ttk.Radiobutton(dataTypeRadiobuttonsFrame, text="Számok", variable=self.selectedDataType, value="num")
         numbersRadiobutton.grid(column=0, row=0, sticky="w")
 
-        # root.mainFrame.optionsFrame.radiobuttonsFrame.textRadiobutton
-        textRadiobutton = ttk.Radiobutton(radiobuttonsFrame, text="text", variable=self.selectedDataType, value="text")
+        # root.mainFrame.optionsFrame.dataTypeRadiobuttonsFrame.textRadiobutton
+        textRadiobutton = ttk.Radiobutton(dataTypeRadiobuttonsFrame, text="Szövegek", variable=self.selectedDataType, value="text")
         textRadiobutton.grid(column=0, row=1, sticky="w")
+
+        # root.mainFrame.optionsFrame.sortDirectionRadiobuttonsFrame
+        sortDirectionRadiobuttonsFrame = ttk.Frame(optionsFrame)
+        sortDirectionRadiobuttonsFrame.grid(column=0, row=2, sticky="ew")
+
+        # root.mainFrame.optionsFrame.sortDirectionRadiobuttonsFrame.ascendingRadiobutton
+        ascendingRadiobutton = ttk.Radiobutton(sortDirectionRadiobuttonsFrame, text="Növekvő", variable=self.selectedSortDirection, value="asc")
+        ascendingRadiobutton.grid(column=0, row=3, sticky="w")
+
+        # root.mainFrame.optionsFrame.sortDirectionRadiobuttonsFrame.descendingRadiobutton
+        descendingRadiobutton = ttk.Radiobutton(sortDirectionRadiobuttonsFrame, text="Csökkenő", variable=self.selectedSortDirection, value="desc")
+        descendingRadiobutton.grid(column=0, row=4, sticky="w")
 
         # root.mainFrame.optionsFrame.entryFrame
         entryFrame = ttk.Frame(optionsFrame)
-        entryFrame.grid(column=0, row=2, sticky="ew")
+        entryFrame.grid(column=0, row=3, sticky="ew")
         entryFrame.columnconfigure(0, weight=1)
         entryFrame.columnconfigure(1, weight=1)
         entryFrame.rowconfigure(0, weight=1)
         entryFrame.rowconfigure(1, weight=1)
-
-        # # root.entryErrorLabel
-        # errorFont = font.nametofont("TkDefaultFont").copy()
-        # errorFont.configure(size=8)
-        # self.entryErrorLabel = ttk.Label(root, text="invalid value", font=errorFont)
 
         # root.mainFrame.optionsFrame.entryFrame.quantityFrame
         quantityFrame = ttk.Frame(entryFrame, padding=3)
@@ -141,7 +169,7 @@ class SortingVisualizer:
 
         # root.mainFrame.optionsFrame.generateDataButton
         generateDataButton = ttk.Button(optionsFrame, text="Új adat generálása", command=self.generateAndLoadData)
-        generateDataButton.grid(column=0, row=3, sticky="ew")
+        generateDataButton.grid(column=0, row=4, sticky="ew")
 
         # root.mainFrame.mediaFrame
         mediaFrame = ttk.Frame(mainFrame, height=100)
@@ -166,7 +194,7 @@ class SortingVisualizer:
         playButtonHolder.grid(column=1, row=0)
         playButtonHolder.pack_propagate(False)
 
-        playButton = ttk.Button(playButtonHolder, command=self.test)
+        playButton = ttk.Button(playButtonHolder, command=self.toggleStepCycleLoopRunning)
         playButton.pack(fill=tk.BOTH, expand=True)
 
         # root.mainFrame.mediaFrame.backButtonHolder.backButton
@@ -174,7 +202,7 @@ class SortingVisualizer:
         backButtonHolder.grid(column=0, row=0, sticky="w")
         backButtonHolder.pack_propagate(False)
 
-        backButton = ttk.Button(backButtonHolder)
+        backButton = ttk.Button(backButtonHolder, command=lambda: self.step(forward=False))
         backButton.pack(fill=tk.BOTH, expand=True)
 
         # root.mainFrame.mediaFrame.forwardButtonHolder.forwardButton
@@ -182,7 +210,7 @@ class SortingVisualizer:
         forwardButtonHolder.grid(column=2, row=0, sticky="e")
         forwardButtonHolder.pack_propagate(False)
 
-        forwardButton = ttk.Button(forwardButtonHolder)
+        forwardButton = ttk.Button(forwardButtonHolder, command=lambda: self.step(forward=True))
         forwardButton.pack(fill=tk.BOTH, expand=True)
 
         # root.mainFrame.additionalOptionsFrame
@@ -193,8 +221,8 @@ class SortingVisualizer:
         additionalOptionsFrame.rowconfigure(0, weight=1)
 
         # root.mainFrame.additionalOptionsFrame.speedScale
-        speedScale = ttk.Scale(additionalOptionsFrame, from_=0.5, to=1.5)
-        speedScale.set(1)
+        speedScale = ttk.Scale(additionalOptionsFrame, from_=1, to=0, variable=self.stepDelay)
+        speedScale.set(0.5)
         speedScale.grid(column=0, row=0, sticky="ew")
 
     class DataItem:
@@ -202,7 +230,7 @@ class SortingVisualizer:
             self.value = value
             self.toDisplay = toDisplay if toDisplay else str(value)
             self.columnId = columnId
-    
+
     class CallData:
         def __init__(self, func, args, kwargs):
             self.func = func
@@ -210,8 +238,8 @@ class SortingVisualizer:
             self.kwargs = kwargs
             self.reply = None
             self.replyEvent = threading.Event()
-    
-    def callOnMainThread(self, func, *args, **kwargs):
+
+    def addToCallQueue(self, func, *args, **kwargs):
         callData = self.CallData(func, args, kwargs)
         self.callQueue.put(callData)
         self.root.event_generate("<<queue_call>>", when="tail")
@@ -228,17 +256,15 @@ class SortingVisualizer:
             pass
 
     def validateNumInput(self, input, widgetName, varName):
-        # self.root.nametowidget(widgetName).configure(style="TFrame.red")
+        # widget = self.root.nametowidget(widgetName)
         if re.match("^[0-9]*$", input) != None:
             if input == "":
                 self.root.setvar(varName, "")
             else:
                 self.root.setvar(varName, int(input))
-            print(self.root.getvar(varName))
             return True
-        print(self.root.getvar(varName))
         return False
-    
+
     def SetStateForAllChildren(self, state, *objects):
         for object in objects:
             for child in object.winfo_children():
@@ -251,6 +277,9 @@ class SortingVisualizer:
             self.SetStateForAllChildren(tk.DISABLED, self.minFrame, self.maxFrame)
 
     def generateAndLoadData(self):
+        if self.stepCycleLoopRunning:
+            self.toggleStepCycleLoopRunning()
+
         quantity = self.quantity.get()
         minV = self.min.get()
         maxV = self.max.get()
@@ -261,7 +290,7 @@ class SortingVisualizer:
             self.showErrorMessage("A mennyiség nem lehet kisebb mint 2.")
             return
         if self.selectedDataType.get() == "num":
-            if minV == "" and maxV == "":
+            if minV == "" or maxV == "":
                 self.showErrorMessage("Adj meg minimum és maximum értékeket!")
                 return
             if minV > maxV:
@@ -269,12 +298,18 @@ class SortingVisualizer:
                 return
             freakbob.Szam_Gen(quantity, minV, maxV)
         else:
-            freakbob.Szo_Gen(self.quantity)
-        self.getDataFromFile("ki.txt")
+            freakbob.Szo_Gen(quantity)
+        if not self.getDataFromFile("ki.txt"):
+            return
         self.drawColumns()
+
+        threading.Thread(target=self.algoritms[self.algorithmCombobox.get()](self).sort(), daemon=True).start()
 
     def getDataFromFile(self, filename):
         self.data = None
+        self.steps = []
+        self.currentStep = -1
+        self.progressbar.configure(value=0)
         self.canvas.delete("column")
 
         try:
@@ -282,49 +317,77 @@ class SortingVisualizer:
                 content = f.read().strip()
         except:
             self.showErrorMessage("Probléma adódott a file megnyitása közben.")
-            return
+            return False
 
         if re.match("^([0-9]+;)+[0-9]+$", content):
-            self.data = [self.DataItem(int(s), s) for s in content.split(";")]
+            self.data = [self.DataItem(int(s)) for s in content.split(";")]
         elif re.match("^([a-zA-Z]+;)+[a-zA-Z]+$", content):
             self.data = self.assignValuesToStrings(content.split(";"))
         else:
             self.showErrorMessage("A legenerált file-ban helytelen az adatszerkezet.")
+            return False
+        return True
 
     def showErrorMessage(self, message):
         messagebox.showerror(message=message)
 
     def assignValuesToStrings(self, textData):
         toReturn = []
-        for s in map(str.lower, textData):
+        for s in textData:
             value = 0
             for i,c in enumerate(s):
-                value += (ord(c)-ord('a'))/26**(i+1)
+                value += (ord(c.lower())-ord('a'))/26**(i+1)
             toReturn.append(self.DataItem(value, s))
         return toReturn
 
     def drawColumns(self):
         self.canvas.delete("column")
         values = [x.value for x in self.data]
-        # minV = min(values)
         maxV = max(values)
 
         cWidth = self.canvas.winfo_width()
         cHeight = self.canvas.winfo_height()
-        barAreaWidth = cWidth/len(self.data)
+        barAreaWidth = (cWidth-5)/len(self.data)
         barWidth = barAreaWidth*0.8
 
+        self.columnPositions = [int(barAreaWidth*i+(barAreaWidth-barWidth)/2+2) for i in range(len(self.data))]
+
         for i,item in enumerate(self.data):
-            # item.columnId = self.canvas.create_rectangle(barAreaWidth*i+(barAreaWidth-barWidth)/2, cHeight, barAreaWidth*i+(barAreaWidth-barWidth)/2+barWidth, cHeight-5-((item.value-minV)/(maxV-minV)*cHeight*0.8), tags=("column"))
-            item.columnId = self.canvas.create_rectangle(barAreaWidth*i+(barAreaWidth-barWidth)/2, cHeight, barAreaWidth*i+(barAreaWidth-barWidth)/2+barWidth, cHeight-5-(item.value/maxV*cHeight*0.8), tags=("column"))
-        self.updateCanvas()
+            item.columnId = self.canvas.create_rectangle(self.columnPositions[i], cHeight, self.columnPositions[i]+barWidth, cHeight-5-(item.value/maxV*cHeight*0.8), tags=("column"))
+        self.updateCanvasColors()
 
-    def updateCanvas(self):
+    def updateCanvasColors(self):
         self.canvas.itemconfigure("column", fill="grey70")
-        self.canvas.itemconfigure("incorrect", fill="red")
-        self.canvas.itemconfigure("correct", fill="green")
+        for cName, cValue in self.colors.items():
+            self.canvas.itemconfigure(cName, fill=cValue)
 
-    def test(self):
-        if self.data:
-            algorithm = sorting_algorithm.BubbleSort(self)
-            threading.Thread(target=algorithm.sort, daemon=True).start()
+    def startStepCycleLoop(self):
+        self.stepCycleLoopRunning = True
+        while self.stepCycleLoopRunning and self.currentStep < len(self.steps):
+            if (time.perf_counter() - self.lastStepTime) >= self.stepDelay.get():
+                self.step(True)
+        self.stepCycleLoopRunning = False
+
+    def toggleStepCycleLoopRunning(self):
+        if self.steps:
+            if not self.stepCycleLoopRunning and self.currentStep < len(self.steps):
+                threading.Thread(target=self.startStepCycleLoop, daemon=True).start()
+            else:
+                self.stepCycleLoopRunning = False
+
+    def step(self, forward):
+        if self.steps:
+            if not forward and self.currentStep > -1:
+                self.currentStep -= 1
+            elif forward and self.currentStep < len(self.steps):
+                self.currentStep += 1
+
+            self.progressbar.configure(maximum=len(self.steps)+1, value=self.currentStep+1)
+
+            if self.currentStep >= 0 and self.currentStep < len(self.steps):
+                func, *args = self.steps[self.currentStep]  
+                func(*args)
+            else:
+                self.updateCanvasColors()
+
+            self.lastStepTime = time.perf_counter()

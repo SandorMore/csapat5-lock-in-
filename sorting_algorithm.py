@@ -4,64 +4,93 @@ class SortingAlgorithm(ABC):
     def __init__(self, visualizer):
         self.visualizer = visualizer
     
+    compareHighlights = [["red", "red"], ["green", "green"]]
+    swapHighlights = [["red", "red"], ["green", "green"]]
+
     @abstractmethod
     def sort(self):
         pass
 
-    def select(self, *idxs):
-        for idx in idxs:
-            self.visualizer.canvas.addtag("selected", "withtag", self.visualizer.data[idx].columnId)
-
     def deselectAll(self):
-        self.visualizer.canvas.dtag("column", "selected")
-        self.visualizer.canvas.dtag("column", "correct")
-        self.visualizer.canvas.dtag("column", "incorrect")
+        self.visualizer.canvas.itemconfig("column", tags=("column",))
 
     def compare(self, idx1, idx2):
         """
-        1-et ad vissza ha az első nagyobb, minden más esetben pedig 0-t
+        Igazat ad vissza ha az első nagyobb, minden más esetben pedig hamisat
         """
-        self.deselectAll()
-        self.select(idx1, idx2)
-        returnValue = 0
-
+        returnValue = False
         if self.visualizer.data[idx1].value > self.visualizer.data[idx2].value:
-            returnValue = 1
-            self.visualizer.canvas.addtag("incorrect", "withtag", "selected")
+            returnValue = True
+            if self.compareHighlights[0] != None:
+                self.visualizer.steps.append((self.highlightColumns, [self.visualizer.data[idx1].columnId, self.compareHighlights[0][0]], [self.visualizer.data[idx2].columnId, self.compareHighlights[0][1]]))
         else:
-            self.visualizer.canvas.addtag("correct", "withtag", "selected")
-
-        self.visualizer.updateCanvas()
+            if self.compareHighlights[1] != None:
+                self.visualizer.steps.append((self.highlightColumns, [self.visualizer.data[idx1].columnId, self.compareHighlights[1][0]], [self.visualizer.data[idx2].columnId, self.compareHighlights[1][1]]))
         return returnValue
 
     def swap(self, idx1, idx2):
-        self.deselectAll()
-        self.select(idx1, idx2)
-
-        # TODO: valahogy nem pontosan cseréli ki az oszlopokat. Valahol valami egy kicsit elcsúszik.
-        tempPos = self.visualizer.canvas.coords(self.visualizer.data[idx1].columnId)
-        self.visualizer.canvas.moveto(self.visualizer.data[idx1].columnId, self.visualizer.canvas.coords(self.visualizer.data[idx2].columnId)[0])
-        self.visualizer.canvas.moveto(self.visualizer.data[idx2].columnId, tempPos[0])
-
+        if self.swapHighlights[0] != None:
+            self.visualizer.steps.append((self.moveAndHighlightColumns, [self.visualizer.data[idx1].columnId, idx1, self.swapHighlights[0][0]], [self.visualizer.data[idx2].columnId, idx2, self.swapHighlights[0][1]]))
         self.visualizer.data[idx1], self.visualizer.data[idx2] = self.visualizer.data[idx2], self.visualizer.data[idx1]
+        if self.swapHighlights[1] != None:
+            self.visualizer.steps.append((self.moveAndHighlightColumns, [self.visualizer.data[idx1].columnId, idx1, self.swapHighlights[1][0]], [self.visualizer.data[idx2].columnId, idx2, self.swapHighlights[1][1]]))
 
-        self.visualizer.canvas.addtag("correct", "withtag", "selected")
-        self.visualizer.updateCanvas()
+    def highlightColumns(self, *colIdTagPairs):
+        self.deselectAll()
+        for pair in colIdTagPairs:
+            colId, tag = pair
+            if tag != None:
+                self.visualizer.canvas.addtag(tag, "withtag", colId)
+        self.visualizer.updateCanvasColors()
+        self.deselectAll()
 
-import time
+    def moveAndHighlightColumns(self, *colIdPosTagTriplets):
+        colIds, colPoss, tags = zip(*colIdPosTagTriplets)
+
+        for i in range(len(colIdPosTagTriplets)):
+            self.visualizer.canvas.moveto(colIds[i], self.visualizer.columnPositions[colPoss[i]])
+
+        self.highlightColumns(*list(zip(colIds, tags)))
 
 class BubbleSort(SortingAlgorithm):
+    compareHighlights = [None, ["green", "green"]]
+
     def sort(self):
         n = len(self.visualizer.data)
-        for i in range(n):
-            swapped = False
+        sortDir = self.visualizer.selectedSortDirection.get()
+        for i in range(n-1):
             for j in range(0, n-i-1):
-                time.sleep(0.5)
-                if self.visualizer.callOnMainThread(self.compare, j, j+1):
-                    time.sleep(0.5)
-                    self.visualizer.callOnMainThread(self.swap, j, j+1)
-                    swapped = True
-            if swapped == False:
+                if (sortDir == "asc" and self.compare(j, j+1)) or (sortDir == "desc" and self.compare(j+1, j)):
+                    self.swap(j, j+1)
+
+class ImprovedBubbleSort(SortingAlgorithm):
+    compareHighlights = [None, ["green", "green"]]
+
+    def sort(self):
+        n = len(self.visualizer.data)
+        sortDir = self.visualizer.selectedSortDirection.get()
+        for i in range(n, 0, -1):
+            lastSwapIdx = None
+            for j in range(0, i-1):
+                if (sortDir == "asc" and self.compare(j, j+1)) or (sortDir == "desc" and self.compare(j+1, j)):
+                    self.swap(j, j+1)
+                    lastSwapIdx = j
+            if lastSwapIdx == None:
                 break
-        self.visualizer.callOnMainThread(self.deselectAll)
-        self.visualizer.callOnMainThread(self.visualizer.updateCanvas)
+            i = lastSwapIdx
+
+class SelectionSort(SortingAlgorithm):
+    defaultCompareHighlights = [["lightred", "lightgreen"], ["lightgreen", "lightred"]]
+    compareHighlights = defaultCompareHighlights
+
+    def sort(self):
+        n = len(self.visualizer.data)
+        sortDir = self.visualizer.selectedSortDirection.get()
+        self.compareHighlights = self.defaultCompareHighlights if sortDir == "asc" else [self.defaultCompareHighlights[1], self.defaultCompareHighlights[0]]
+        for i in range(n-1):
+            minIdx = i
+            for j in range(i+1, n):
+                if (sortDir == "asc" and self.compare(minIdx, j)) or (sortDir == "desc" and self.compare(j, minIdx)):
+                    minIdx = j
+            if minIdx != i:
+                self.swap(i, minIdx)
