@@ -42,6 +42,9 @@ class SortingVisualizer:
 
         self.style = ttk.Style(root)
         self.style.configure("TFrame", background="grey80")
+        self.style.configure("TRadiobutton", background="grey80")
+        self.style.configure("TLabel", background="grey80")
+        self.style.configure("TScale", background="grey80")
 
         # root.mainFrame
         mainFrame = ttk.Frame(root, padding=10)

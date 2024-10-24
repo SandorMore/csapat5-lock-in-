@@ -69,15 +69,14 @@ class ImprovedBubbleSort(SortingAlgorithm):
     def sort(self):
         n = len(self.visualizer.data)
         sortDir = self.visualizer.selectedSortDirection.get()
-        for i in range(n, 0, -1):
-            lastSwapIdx = None
+        i = n
+        while i >= 1:
+            lastSwapIdx = -1
             for j in range(0, i-1):
                 if (sortDir == "asc" and self.compare(j, j+1)) or (sortDir == "desc" and self.compare(j+1, j)):
                     self.swap(j, j+1)
                     lastSwapIdx = j
-            if lastSwapIdx == None:
-                break
-            i = lastSwapIdx
+            i = lastSwapIdx + 1
 
 class SelectionSort(SortingAlgorithm):
     defaultCompareHighlights = [["lightred", "lightgreen"], ["lightgreen", "lightred"]]
